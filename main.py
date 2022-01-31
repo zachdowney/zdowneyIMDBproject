@@ -6,7 +6,7 @@ import sys
 baseurl = "https://imdb-api.com/en/API/Top250TVs/"
 userurl = "https://imdb-api.com/en/API/UserRatings/"
 # https://medium.com/black-tech-diva/hide-your-api-keys-7635e181a06c
-# showed me how to hide my API key
+# showed me how to use a secrets file
 # https://www.youtube.com/watch?v=QovKok-2u9k
 # showed me how to get data and what pprint is
 response = requests.get(baseurl + config.apiKey)
@@ -22,7 +22,7 @@ def user_ratings(self):
                 or shows['items'][i]['rank'] == '100' or shows['items'][i]['rank'] == '200':
             r = requests.get(userurl + config.apiKey + "/" + shows['items'][i]['id'])
             info = r.json()
-            print("User rating data for show number " + shows['items'][i]['rank'] + ":")
+            print("User rating data for the number " + shows['items'][i]['rank'] + " ranked show:")
             pprint.pprint(info)
             print('\n')
     print("User rating data for Wheel of Time:")

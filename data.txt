@@ -1,4 +1,4 @@
-User rating data for show number 1:
+User rating data for the number 1 ranked show:
 {'errorMessage': '',
  'fullTitle': 'Planet Earth II (TV Series 2016–2016)',
  'imDbId': 'tt5491994',
@@ -19,7 +19,7 @@ User rating data for show number 1:
  'year': '2016'}
 
 
-User rating data for show number 50:
+User rating data for the number 50 ranked show:
 {'errorMessage': '',
  'fullTitle': 'Nathan for You (TV Series 2013–2017)',
  'imDbId': 'tt2297757',
@@ -40,7 +40,7 @@ User rating data for show number 50:
  'year': '2013'}
 
 
-User rating data for show number 100:
+User rating data for the number 100 ranked show:
 {'errorMessage': '',
  'fullTitle': 'The Shield (TV Series 2002–2008)',
  'imDbId': 'tt0286486',
@@ -61,7 +61,7 @@ User rating data for show number 100:
  'year': '2002'}
 
 
-User rating data for show number 200:
+User rating data for the number 200 ranked show:
 {'errorMessage': '',
  'fullTitle': 'Louie (TV Series 2010–2015)',
  'imDbId': 'tt1492966',
