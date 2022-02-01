@@ -36,7 +36,7 @@ def list_shows(self):
     print("List of Top 250 shows:")
     print('\n')
     for i in range(0, 250):
-        pprint.pprint(shows['items'][i])
+        print(shows['items'][i])
         print('\n')
 
 
