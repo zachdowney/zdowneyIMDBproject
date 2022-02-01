@@ -31,6 +31,7 @@ def wheel_user_ratings():
     print("User rating data for Wheel of Time:")
     pprint.pprint(wheel_info)
 
+
 def list_shows(self):
     print('\n')
     print("List of Top 250 shows:")
@@ -42,10 +43,20 @@ def list_shows(self):
 
 # https://www.kite.com/python/answers/how-to-redirect-print-output-to-a-text-file-in-python
 # that website showed me how to get my data onto my text file.
-sys.stdout = open("data.txt", "w")
+def save_data(data, filename='data.txt'):
+    sys.stdout = open(filename, "w")
 
-user_ratings(shows)
-wheel_user_ratings()
-list_shows(shows)
+    user_ratings(data)
+    wheel_user_ratings()
+    list_shows(data)
 
-sys.stdout.close()
+    sys.stdout.close()
+
+
+def main():
+    save_data(shows)
+
+
+if __name__ == '__main__':
+    main()
+
