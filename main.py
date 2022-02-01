@@ -14,9 +14,6 @@ shows = response.json()
 
 
 def user_ratings(self):
-    wheel_of_time_id = 'tt0331080'
-    w = requests.get(userurl + config.apiKey + "/" + wheel_of_time_id)
-    wheel_info = w.json()
     for i in range(0, 200):
         if shows['items'][i]['rank'] == '1' or shows['items'][i]['rank'] == '50' \
                 or shows['items'][i]['rank'] == '100' or shows['items'][i]['rank'] == '200':
@@ -25,9 +22,14 @@ def user_ratings(self):
             print("User rating data for the number " + shows['items'][i]['rank'] + " ranked show:")
             pprint.pprint(info)
             print('\n')
+
+
+def wheel_user_ratings():
+    wheel_of_time_id = 'tt0331080'
+    w = requests.get(userurl + config.apiKey + "/" + wheel_of_time_id)
+    wheel_info = w.json()
     print("User rating data for Wheel of Time:")
     pprint.pprint(wheel_info)
-
 
 def list_shows(self):
     print('\n')
@@ -43,6 +45,7 @@ def list_shows(self):
 sys.stdout = open("data.txt", "w")
 
 user_ratings(shows)
+wheel_user_ratings()
 list_shows(shows)
 
 sys.stdout.close()
