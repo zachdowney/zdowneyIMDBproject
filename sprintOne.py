@@ -13,13 +13,13 @@ response = requests.get(base_url + secrets.apiKey)
 shows = response.json()
 
 
-def user_ratings(self):
+def user_ratings(data):
     for i in range(0, 200):
-        if shows['items'][i]['rank'] == '1' or shows['items'][i]['rank'] == '50' \
-                or shows['items'][i]['rank'] == '100' or shows['items'][i]['rank'] == '200':
-            r = requests.get(user_url + secrets.apiKey + "/" + shows['items'][i]['id'])
+        if data['items'][i]['rank'] == '1' or data['items'][i]['rank'] == '50' \
+                or data['items'][i]['rank'] == '100' or data['items'][i]['rank'] == '200':
+            r = requests.get(user_url + secrets.apiKey + "/" + data['items'][i]['id'])
             info = r.json()
-            print("User rating data for the number " + shows['items'][i]['rank'] + " ranked show:")
+            print("User rating data for the number " + data['items'][i]['rank'] + " ranked show:")
             pprint.pprint(info)
             print('\n')
 
@@ -32,12 +32,12 @@ def wheel_user_ratings():
     pprint.pprint(wheel_info)
 
 
-def list_shows(self):
+def list_shows(data):
     print('\n')
     print("List of Top 250 shows:")
     print('\n')
     for i in range(0, 250):
-        print(shows['items'][i])
+        print(data['items'][i])
         print('\n')
 
 
