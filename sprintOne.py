@@ -1,6 +1,6 @@
 import requests
 import pprint
-import secrets
+import config
 import sys
 
 base_url = "https://imdb-api.com/en/API/Top250TVs/"
@@ -9,35 +9,35 @@ user_url = "https://imdb-api.com/en/API/UserRatings/"
 # showed me how to use a secrets file
 # https://www.youtube.com/watch?v=QovKok-2u9k
 # showed me how to get data and what pprint is
-response = requests.get(base_url + secrets.apiKey)
+response = requests.get(base_url + config.apiKey)
 shows = response.json()
 
 
-def user_ratings(data):
+def user_ratings(self):
     for i in range(0, 200):
-        if data['items'][i]['rank'] == '1' or data['items'][i]['rank'] == '50' \
-                or data['items'][i]['rank'] == '100' or data['items'][i]['rank'] == '200':
-            r = requests.get(user_url + secrets.apiKey + "/" + data['items'][i]['id'])
+        if shows['items'][i]['rank'] == '1' or shows['items'][i]['rank'] == '50' \
+                or shows['items'][i]['rank'] == '100' or shows['items'][i]['rank'] == '200':
+            r = requests.get(user_url + config.apiKey + "/" + shows['items'][i]['id'])
             info = r.json()
-            print("User rating data for the number " + data['items'][i]['rank'] + " ranked show:")
+            print("User rating data for the number " + shows['items'][i]['rank'] + " ranked show:")
             pprint.pprint(info)
             print('\n')
 
 
 def wheel_user_ratings():
     wheel_of_time_id = 'tt0331080'
-    w = requests.get(user_url + secrets.apiKey + "/" + wheel_of_time_id)
+    w = requests.get(user_url + config.apiKey + "/" + wheel_of_time_id)
     wheel_info = w.json()
     print("User rating data for Wheel of Time:")
     pprint.pprint(wheel_info)
 
 
-def list_shows(data):
+def list_shows(self):
     print('\n')
     print("List of Top 250 shows:")
     print('\n')
     for i in range(0, 250):
-        print(data['items'][i])
+        print(shows['items'][i])
         print('\n')
 
 
