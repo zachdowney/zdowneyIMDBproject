@@ -7,12 +7,11 @@ from typing import Tuple
 
 base_url = "https://imdb-api.com/en/API/Top250TVs/"
 user_url = "https://imdb-api.com/en/API/UserRatings/"
-# https://medium.com/black-tech-diva/hide-your-api-keys-7635e181a06c
-# showed me how to use a secrets file
-# https://www.youtube.com/watch?v=QovKok-2u9k
-# showed me how to get data and what pprint is
 response = requests.get(base_url + config.apiKey)
 shows = response.json()
+
+# https://www.youtube.com/watch?v=byHcYRpMgI4
+# this whole video helped me with a
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
@@ -21,7 +20,7 @@ def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
     return connection, cursor
 
 
-def setup_shows_db(cursor: sqlite3.Cursor):
+def setup_db(cursor: sqlite3.Cursor):
     cursor.execute('''CREATE TABLE IF NOT EXISTS shows (
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
@@ -31,34 +30,31 @@ def setup_shows_db(cursor: sqlite3.Cursor):
         imDbRating REAL DEFAULT 0,
         imDbRatingCount INTEGER DEFAULT 0
         );''')
-
-
-def setup_ratings_db(cursor: sqlite3.Cursor):
     cursor.execute('''CREATE TABLE IF NOT EXISTS ratings (
-        imDbId TEXT NOT NULL,
-        totalRating INTEGER DEFAULT 0,
-        totalRatingVotes INTEGER DEFAULT 0,
-        ten_rating_percentage REAL DEFAULT 0,
-        ten_rating_votes INTEGER DEFAULT 0,
-        nine_rating_percentage REAL DEFAULT 0,
-        nine_rating_votes INTEGER DEFAULT 0,
-        eight_rating_percentage REAL DEFAULT 0,
-        eight_rating_votes INTEGER DEFAULT 0,
-        seven_rating_percentage REAL DEFAULT 0,
-        seven_rating_votes INTEGER DEFAULT 0,
-        six_rating_percentage REAL DEFAULT 0,
-        six_rating_votes INTEGER DEFAULT 0,
-        five_rating_percentage REAL DEFAULT 0,
-        five_rating_votes INTEGER DEFAULT 0,
-        four_rating_percentage REAL DEFAULT 0,
-        four_rating_votes INTEGER DEFAULT 0,
-        three_rating_percentage REAL DEFAULT 0,
-        three_rating_votes INTEGER DEFAULT 0,
-        two_rating_percentage REAL DEFAULT 0,
-        two_rating_votes INTEGER DEFAULT 0,
-        one_rating_percentage REAL DEFAULT 0,
-        one_rating_votes INTEGER DEFAULT 0
-        );''')
+            imDbID TEXT NOT NULL,
+            totalRating INTEGER DEFAULT 0,
+            totalRatingVotes INTEGER DEFAULT 0,
+            ten_rating_percentage REAL DEFAULT 0,
+            ten_rating_votes INTEGER DEFAULT 0,
+            nine_rating_percentage REAL DEFAULT 0,
+            nine_rating_votes INTEGER DEFAULT 0,
+            eight_rating_percentage REAL DEFAULT 0,
+            eight_rating_votes INTEGER DEFAULT 0,
+            seven_rating_percentage REAL DEFAULT 0,
+            seven_rating_votes INTEGER DEFAULT 0,
+            six_rating_percentage REAL DEFAULT 0,
+            six_rating_votes INTEGER DEFAULT 0,
+            five_rating_percentage REAL DEFAULT 0,
+            five_rating_votes INTEGER DEFAULT 0,
+            four_rating_percentage REAL DEFAULT 0,
+            four_rating_votes INTEGER DEFAULT 0,
+            three_rating_percentage REAL DEFAULT 0,
+            three_rating_votes INTEGER DEFAULT 0,
+            two_rating_percentage REAL DEFAULT 0,
+            two_rating_votes INTEGER DEFAULT 0,
+            one_rating_percentage REAL DEFAULT 0,
+            one_rating_votes INTEGER DEFAULT 0
+            );''')
 
 
 def fill_shows_table(cursor: sqlite3.Cursor):
@@ -132,16 +128,15 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
         print(item)
 
 
-def close_db(connection : sqlite3.Connection):
-    connection.commit()   # make sure any changes get saved
+def close_db(connection: sqlite3.Connection):
+    connection.commit()
     connection.close()
 
 
 def main():
     conn, cursor = open_db('shows.db')
     print(type(conn))
-    setup_shows_db(cursor)
-    setup_ratings_db(cursor)
+    setup_db(cursor)
     fill_shows_table(cursor)
     fill_ratings_table(cursor)
     close_db(conn)
