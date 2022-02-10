@@ -14,6 +14,7 @@ def get_data():
     shows = response.json()
     return shows
 
+
 def user_ratings(self):
     shows = get_data()
     user_url = "https://imdb-api.com/en/API/UserRatings/"
@@ -65,4 +66,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

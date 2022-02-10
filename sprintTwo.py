@@ -10,6 +10,7 @@ def get_data():
     shows = response.json()
     return shows
 
+
 # https://www.youtube.com/watch?v=byHcYRpMgI4
 # this whole video helped me a ton with a creating and filling the database
 # also helped me with the SELECT and fetchall part
@@ -17,7 +18,7 @@ def get_data():
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
     connection = sqlite3.connect(filename)  # connect to existing DB or create new one
-    cursor = connection.cursor()   # get ready to read/write data
+    cursor = connection.cursor()  # get ready to read/write data
     return connection, cursor
 
 
@@ -90,14 +91,19 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
             four_rating_votes, three_rating_percentage, three_rating_votes, two_rating_percentage, two_rating_votes, 
             one_rating_percentage, one_rating_votes) 
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                       (info['imDbId'], info['totalRating'], info['totalRatingVotes'], info['ratings'][0]['percent'],
-                        info['ratings'][0]['votes'], info['ratings'][1]['percent'], info['ratings'][1]['votes'],
-                        info['ratings'][2]['percent'], info['ratings'][2]['votes'], info['ratings'][3]['percent'],
-                        info['ratings'][3]['votes'], info['ratings'][4]['percent'], info['ratings'][4]['votes'],
-                        info['ratings'][5]['percent'], info['ratings'][5]['votes'], info['ratings'][6]['percent'],
-                        info['ratings'][6]['votes'], info['ratings'][7]['percent'], info['ratings'][7]['votes'],
-                        info['ratings'][8]['percent'], info['ratings'][8]['votes'], info['ratings'][9]['percent'],
-                        info['ratings'][9]['votes']))
+                           (
+                               info['imDbId'], info['totalRating'], info['totalRatingVotes'],
+                               info['ratings'][0]['percent'],
+                               info['ratings'][0]['votes'], info['ratings'][1]['percent'], info['ratings'][1]['votes'],
+                               info['ratings'][2]['percent'], info['ratings'][2]['votes'],
+                               info['ratings'][3]['percent'],
+                               info['ratings'][3]['votes'], info['ratings'][4]['percent'], info['ratings'][4]['votes'],
+                               info['ratings'][5]['percent'], info['ratings'][5]['votes'],
+                               info['ratings'][6]['percent'],
+                               info['ratings'][6]['votes'], info['ratings'][7]['percent'], info['ratings'][7]['votes'],
+                               info['ratings'][8]['percent'], info['ratings'][8]['votes'],
+                               info['ratings'][9]['percent'],
+                               info['ratings'][9]['votes']))
 
     wheel_of_time_id = 'tt0331080'
     w = requests.get(user_url + config.apiKey + "/" + wheel_of_time_id)
@@ -105,7 +111,8 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
     cursor.execute('''INSERT INTO ratings (imDbId, totalRating, totalRatingVotes, 
                 ten_rating_percentage, ten_rating_votes, nine_rating_percentage, nine_rating_votes, 
                 eight_rating_percentage, eight_rating_votes, seven_rating_percentage, seven_rating_votes, 
-                six_rating_percentage, six_rating_votes, five_rating_percentage, five_rating_votes, four_rating_percentage, 
+                six_rating_percentage, six_rating_votes, 
+                five_rating_percentage, five_rating_votes, four_rating_percentage, 
                 four_rating_votes, three_rating_percentage, three_rating_votes, two_rating_percentage, two_rating_votes, 
                 one_rating_percentage, one_rating_votes) 
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
