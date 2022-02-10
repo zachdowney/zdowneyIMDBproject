@@ -1,17 +1,18 @@
 import sqlite3
 import requests
-import pprint
 import config
-import sys
 from typing import Tuple
 
-base_url = "https://imdb-api.com/en/API/Top250TVs/"
-user_url = "https://imdb-api.com/en/API/UserRatings/"
-response = requests.get(base_url + config.apiKey)
-shows = response.json()
+
+def get_data():
+    base_url = "https://imdb-api.com/en/API/Top250TVs/"
+    response = requests.get(base_url + config.apiKey)
+    shows = response.json()
+    return shows
 
 # https://www.youtube.com/watch?v=byHcYRpMgI4
-# this whole video helped me with a
+# this whole video helped me a ton with a creating and filling the database
+# also helped me with the SELECT and fetchall part
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
@@ -53,11 +54,13 @@ def setup_db(cursor: sqlite3.Cursor):
             two_rating_percentage REAL DEFAULT 0,
             two_rating_votes INTEGER DEFAULT 0,
             one_rating_percentage REAL DEFAULT 0,
-            one_rating_votes INTEGER DEFAULT 0
+            one_rating_votes INTEGER DEFAULT 0,
+            FOREIGN KEY (imDbId) REFERENCES shows (id)
+            ON DELETE CASCADE
             );''')
 
 
-def fill_shows_table(cursor: sqlite3.Cursor):
+def fill_shows_table(cursor: sqlite3.Cursor, shows):
     for i in range(0, 250):
         cursor.execute('''INSERT INTO shows (id, title,
                        fullTitle, year, crew, imDbRating, imDbRatingCount)
@@ -68,17 +71,16 @@ def fill_shows_table(cursor: sqlite3.Cursor):
                         shows['items'][i]['imDbRatingCount']))
 
     cursor.execute('SELECT rowid, * FROM shows')
-    items = cursor.fetchall()
-
-    for item in items:
-        print(item)
+    cursor.fetchall()
 
 
 def fill_ratings_table(cursor: sqlite3.Cursor):
+    shows = get_data()
+    user_url = "https://imdb-api.com/en/API/UserRatings/"
     print('\n')
     for i in range(0, 200):
         if shows['items'][i]['rank'] == '1' or shows['items'][i]['rank'] == '50' \
-                or shows['items'][i]['rank'] == '100' or shows['items'][i]['rank'] == '200':
+                or shows['items'][i]['rank'] == '100' or shows['items'][i]['rank'] == '201':
             r = requests.get(user_url + config.apiKey + "/" + shows['items'][i]['id'])
             info = r.json()
             cursor.execute('''INSERT INTO ratings (imDbId, totalRating, totalRatingVotes, 
@@ -88,14 +90,13 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
             four_rating_votes, three_rating_percentage, three_rating_votes, two_rating_percentage, two_rating_votes, 
             one_rating_percentage, one_rating_votes) 
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                       (info['imDbId'], info['totalRating'],
-                        info['totalRatingVotes'], info['ratings'][0]['percent'], info['ratings'][0]['votes'],
-                        info['ratings'][1]['percent'], info['ratings'][1]['votes'], info['ratings'][2]['percent'],
-                        info['ratings'][2]['votes'], info['ratings'][3]['percent'], info['ratings'][3]['votes'],
-                        info['ratings'][4]['percent'], info['ratings'][4]['votes'], info['ratings'][5]['percent'],
-                        info['ratings'][5]['votes'], info['ratings'][6]['percent'], info['ratings'][6]['votes'],
-                        info['ratings'][7]['percent'], info['ratings'][7]['votes'], info['ratings'][8]['percent'],
-                        info['ratings'][8]['votes'], info['ratings'][9]['percent'],
+                       (info['imDbId'], info['totalRating'], info['totalRatingVotes'], info['ratings'][0]['percent'],
+                        info['ratings'][0]['votes'], info['ratings'][1]['percent'], info['ratings'][1]['votes'],
+                        info['ratings'][2]['percent'], info['ratings'][2]['votes'], info['ratings'][3]['percent'],
+                        info['ratings'][3]['votes'], info['ratings'][4]['percent'], info['ratings'][4]['votes'],
+                        info['ratings'][5]['percent'], info['ratings'][5]['votes'], info['ratings'][6]['percent'],
+                        info['ratings'][6]['votes'], info['ratings'][7]['percent'], info['ratings'][7]['votes'],
+                        info['ratings'][8]['percent'], info['ratings'][8]['votes'], info['ratings'][9]['percent'],
                         info['ratings'][9]['votes']))
 
     wheel_of_time_id = 'tt0331080'
@@ -122,10 +123,7 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
                     wheel_info['ratings'][9]['votes']))
 
     cursor.execute('SELECT rowid, * FROM ratings')
-    items = cursor.fetchall()
-
-    for item in items:
-        print(item)
+    cursor.fetchall()
 
 
 def close_db(connection: sqlite3.Connection):
@@ -134,10 +132,11 @@ def close_db(connection: sqlite3.Connection):
 
 
 def main():
+    shows = get_data()
     conn, cursor = open_db('shows.db')
     print(type(conn))
     setup_db(cursor)
-    fill_shows_table(cursor)
+    fill_shows_table(cursor, shows)
     fill_ratings_table(cursor)
     close_db(conn)
 

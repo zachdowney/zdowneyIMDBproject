@@ -3,17 +3,20 @@ import pprint
 import config
 import sys
 
-base_url = "https://imdb-api.com/en/API/Top250TVs/"
-user_url = "https://imdb-api.com/en/API/UserRatings/"
-# https://medium.com/black-tech-diva/hide-your-api-keys-7635e181a06c
-# showed me how to use a secrets file
-# https://www.youtube.com/watch?v=QovKok-2u9k
-# showed me how to get data and what pprint is
-response = requests.get(base_url + config.apiKey)
-shows = response.json()
 
+def get_data():
+    base_url = "https://imdb-api.com/en/API/Top250TVs/"
+    # https://medium.com/black-tech-diva/hide-your-api-keys-7635e181a06c
+    # showed me how to use a secrets file
+    # https://www.youtube.com/watch?v=QovKok-2u9k
+    # showed me how to get data and what pprint is
+    response = requests.get(base_url + config.apiKey)
+    shows = response.json()
+    return shows
 
 def user_ratings(self):
+    shows = get_data()
+    user_url = "https://imdb-api.com/en/API/UserRatings/"
     for i in range(0, 200):
         if shows['items'][i]['rank'] == '1' or shows['items'][i]['rank'] == '50' \
                 or shows['items'][i]['rank'] == '100' or shows['items'][i]['rank'] == '200':
@@ -25,6 +28,7 @@ def user_ratings(self):
 
 
 def wheel_user_ratings():
+    user_url = "https://imdb-api.com/en/API/UserRatings/"
     wheel_of_time_id = 'tt0331080'
     w = requests.get(user_url + config.apiKey + "/" + wheel_of_time_id)
     wheel_info = w.json()
@@ -33,6 +37,7 @@ def wheel_user_ratings():
 
 
 def list_shows(self):
+    shows = get_data()
     print('\n')
     print("List of Top 250 shows:")
     print('\n')
@@ -54,6 +59,7 @@ def save_data(data, filename='data.txt'):
 
 
 def main():
+    shows = get_data()
     save_data(shows)
 
 
