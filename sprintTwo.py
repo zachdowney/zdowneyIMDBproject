@@ -84,12 +84,12 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
                 or shows['items'][i]['rank'] == '100' or shows['items'][i]['rank'] == '201':
             r = requests.get(user_url + config.apiKey + "/" + shows['items'][i]['id'])
             info = r.json()
-            cursor.execute('''INSERT INTO ratings (imDbId, totalRating, totalRatingVotes, 
-            ten_rating_percentage, ten_rating_votes, nine_rating_percentage, nine_rating_votes, 
-            eight_rating_percentage, eight_rating_votes, seven_rating_percentage, seven_rating_votes, 
-            six_rating_percentage, six_rating_votes, five_rating_percentage, five_rating_votes, four_rating_percentage, 
-            four_rating_votes, three_rating_percentage, three_rating_votes, two_rating_percentage, two_rating_votes, 
-            one_rating_percentage, one_rating_votes) 
+            cursor.execute('''INSERT INTO ratings (imDbId, totalRating, totalRatingVotes,
+            ten_rating_percentage, ten_rating_votes, nine_rating_percentage, nine_rating_votes,
+            eight_rating_percentage, eight_rating_votes, seven_rating_percentage, seven_rating_votes,
+            six_rating_percentage, six_rating_votes, five_rating_percentage, five_rating_votes, four_rating_percentage,
+            four_rating_votes, three_rating_percentage, three_rating_votes, two_rating_percentage, two_rating_votes,
+            one_rating_percentage, one_rating_votes)
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                            (
                                info['imDbId'], info['totalRating'], info['totalRatingVotes'],
@@ -108,13 +108,13 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
     wheel_of_time_id = 'tt0331080'
     w = requests.get(user_url + config.apiKey + "/" + wheel_of_time_id)
     wheel_info = w.json()
-    cursor.execute('''INSERT INTO ratings (imDbId, totalRating, totalRatingVotes, 
-                ten_rating_percentage, ten_rating_votes, nine_rating_percentage, nine_rating_votes, 
-                eight_rating_percentage, eight_rating_votes, seven_rating_percentage, seven_rating_votes, 
-                six_rating_percentage, six_rating_votes, 
-                five_rating_percentage, five_rating_votes, four_rating_percentage, 
-                four_rating_votes, three_rating_percentage, three_rating_votes, two_rating_percentage, two_rating_votes, 
-                one_rating_percentage, one_rating_votes) 
+    cursor.execute('''INSERT INTO ratings (imDbId, totalRating, totalRatingVotes,
+                ten_rating_percentage, ten_rating_votes, nine_rating_percentage, nine_rating_votes,
+                eight_rating_percentage, eight_rating_votes, seven_rating_percentage, seven_rating_votes,
+                six_rating_percentage, six_rating_votes,
+                five_rating_percentage, five_rating_votes, four_rating_percentage,
+                four_rating_votes, three_rating_percentage, three_rating_votes, two_rating_percentage, two_rating_votes,
+                one_rating_percentage, one_rating_votes)
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                    (wheel_info['imDbId'], wheel_info['totalRating'],
                     wheel_info['totalRatingVotes'], wheel_info['ratings'][0]['percent'],
