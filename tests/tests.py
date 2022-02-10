@@ -26,4 +26,3 @@ def test_get_shows():
 
 if __name__ == '__main__':
     test_get_shows()
-
