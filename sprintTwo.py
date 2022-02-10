@@ -7,7 +7,8 @@ from typing import Tuple
 def get_data():
     base_url = "https://imdb-api.com/en/API/Top250TVs/"
     response = requests.get(base_url + config.apiKey)
-    shows = response.json()
+    show_list = response.json()
+    shows = show_list['items']
     return shows
 
 
@@ -62,14 +63,14 @@ def setup_db(cursor: sqlite3.Cursor):
 
 
 def fill_shows_table(cursor: sqlite3.Cursor, shows):
-    for i in range(0, 250):
+    for i in range(0, len(shows)):
         cursor.execute('''INSERT INTO shows (id, title,
                        fullTitle, year, crew, imDbRating, imDbRatingCount)
                        VALUES(?, ?, ?, ?, ?, ?, ?)''',
-                       (shows['items'][i]['id'], shows['items'][i]['title'],
-                        shows['items'][i]['fullTitle'], shows['items'][i]['year'],
-                        shows['items'][i]['crew'], shows['items'][i]['imDbRating'],
-                        shows['items'][i]['imDbRatingCount']))
+                       (shows[i]['id'], shows[i]['title'],
+                        shows[i]['fullTitle'], shows[i]['year'],
+                        shows[i]['crew'], shows[i]['imDbRating'],
+                        shows[i]['imDbRatingCount']))
 
     cursor.execute('SELECT rowid, * FROM shows')
     cursor.fetchall()
@@ -80,9 +81,9 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
     user_url = "https://imdb-api.com/en/API/UserRatings/"
     print('\n')
     for i in range(0, 200):
-        if shows['items'][i]['rank'] == '1' or shows['items'][i]['rank'] == '50' \
-                or shows['items'][i]['rank'] == '100' or shows['items'][i]['rank'] == '201':
-            r = requests.get(user_url + config.apiKey + "/" + shows['items'][i]['id'])
+        if shows[i]['rank'] == '1' or shows[i]['rank'] == '50' \
+                or shows[i]['rank'] == '100' or shows[i]['rank'] == '201':
+            r = requests.get(user_url + config.apiKey + "/" + shows[i]['id'])
             info = r.json()
             cursor.execute('''INSERT INTO ratings (imDbId, totalRating, totalRatingVotes,
             ten_rating_percentage, ten_rating_votes, nine_rating_percentage, nine_rating_votes,

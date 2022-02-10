@@ -11,7 +11,8 @@ def get_data():
     # https://www.youtube.com/watch?v=QovKok-2u9k
     # showed me how to get data and what pprint is
     response = requests.get(base_url + config.apiKey)
-    shows = response.json()
+    show_list = response.json()
+    shows = show_list['items']
     return shows
 
 
@@ -19,11 +20,11 @@ def user_ratings(self):
     shows = get_data()
     user_url = "https://imdb-api.com/en/API/UserRatings/"
     for i in range(0, 200):
-        if shows['items'][i]['rank'] == '1' or shows['items'][i]['rank'] == '50' \
-                or shows['items'][i]['rank'] == '100' or shows['items'][i]['rank'] == '200':
-            r = requests.get(user_url + config.apiKey + "/" + shows['items'][i]['id'])
+        if shows[i]['rank'] == '1' or shows[i]['rank'] == '50' \
+                or shows[i]['rank'] == '100' or shows[i]['rank'] == '200':
+            r = requests.get(user_url + config.apiKey + "/" + shows[i]['id'])
             info = r.json()
-            print("User rating data for the number " + shows['items'][i]['rank'] + " ranked show:")
+            print("User rating data for the number " + shows[i]['rank'] + " ranked show:")
             pprint.pprint(info)
             print('\n')
 
@@ -43,7 +44,7 @@ def list_shows(self):
     print("List of Top 250 shows:")
     print('\n')
     for i in range(0, 250):
-        print(shows['items'][i])
+        print(shows[i])
         print('\n')
 
 
