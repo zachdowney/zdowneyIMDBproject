@@ -10,7 +10,8 @@ on:
     branches: [ master ]
 
 jobs:
-build:
+  build:
+  
     runs-on: ubuntu-latest
 
     steps:
@@ -19,10 +20,10 @@ build:
       uses: actions/setup-python@v2
       with:
         python-version: "3.10"
-    env:
-      API_KEY: ${{ config.apiKey }}
+    - name: Build secrets
+      env:
+        API_KEY: ${{ config.apiKey }}
       run: |
-        echo $API_KEY >> bare.py
         echo 'apiKey = "'$API_KEY'"' >> config.py
     - name: Install dependencies
       run: |
@@ -35,6 +36,6 @@ build:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count  --max-complexity=10 --max-line-length=127 --statistics
-       name: Test with pytest
-       run: |
-       pytest
+    - name: Test with pytest
+      run: |
+       python -m pytest
