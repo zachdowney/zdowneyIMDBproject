@@ -4,6 +4,8 @@ import sprintTwo
 def test_get_shows():
     shows = sprintTwo.get_data()
     num_shows = len(shows)
+    if len(shows) != 250:
+        raise ValueError
     assert num_shows == 250
 
 
@@ -21,7 +23,7 @@ def test_show_db():
     cursor.execute("""SELECT * FROM shows""")
     data = cursor.fetchone()
     sprintTwo.close_db(conn)
-    assert data[1] == 'BSU'
+    assert data[4] == 'Zach Downey'
 
 
 if __name__ == '__main__':

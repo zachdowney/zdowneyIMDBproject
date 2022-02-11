@@ -67,20 +67,29 @@ def fill_shows_table(cursor: sqlite3.Cursor, shows):
         cursor.execute('''INSERT INTO shows (id, title,
                        fullTitle, year, crew, imDbRating, imDbRatingCount)
                        VALUES(?, ?, ?, ?, ?, ?, ?)''',
-                       (shows[i]['id'], shows[i]['title'],
-                        shows[i]['fullTitle'], shows[i]['year'],
-                        shows[i]['crew'], shows[i]['imDbRating'],
-                        shows[i]['imDbRatingCount']))
+                       (shows[i]['id'], shows[i]['title'], shows[i]['fullTitle'], shows[i]['year'],
+                        shows[i]['crew'], shows[i]['imDbRating'], shows[i]['imDbRatingCount']))
 
     cursor.execute('SELECT rowid, * FROM shows')
     cursor.fetchall()
+
+
+def wheel_of_time_into_shows_table(cursor: sqlite3.Cursor):
+    cursor.execute('''INSERT INTO shows (id, title,
+                           fullTitle, year, crew, imDbRating, imDbRatingCount)
+                           VALUES(?, ?, ?, ?, ?, ?, ?)''',
+                   ('tt0331080', 'Wheel of Time', 'Wheel of Time (2003)', '2003',
+                    'The Dalai Lama, Lama Lhundup Woeser, Takna Jigme Sangpo',
+                    0, 0))
+    cursor.execute('SELECT rowid, * FROM shows')
+    cursor.fetchone()
 
 
 def fill_ratings_table(cursor: sqlite3.Cursor):
     shows = get_data()
     user_url = "https://imdb-api.com/en/API/UserRatings/"
     print('\n')
-    for i in range(0, 200):
+    for i in range(len(shows)):
         if shows[i]['rank'] == '1' or shows[i]['rank'] == '50' \
                 or shows[i]['rank'] == '100' or shows[i]['rank'] == '201':
             r = requests.get(user_url + config.apiKey + "/" + shows[i]['id'])
@@ -94,17 +103,19 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                            (
                                info['imDbId'], info['totalRating'], info['totalRatingVotes'],
-                               info['ratings'][0]['percent'],
-                               info['ratings'][0]['votes'], info['ratings'][1]['percent'], info['ratings'][1]['votes'],
+                               info['ratings'][0]['percent'], info['ratings'][0]['votes'],
+                               info['ratings'][1]['percent'], info['ratings'][1]['votes'],
                                info['ratings'][2]['percent'], info['ratings'][2]['votes'],
-                               info['ratings'][3]['percent'],
-                               info['ratings'][3]['votes'], info['ratings'][4]['percent'], info['ratings'][4]['votes'],
+                               info['ratings'][3]['percent'], info['ratings'][3]['votes'],
+                               info['ratings'][4]['percent'], info['ratings'][4]['votes'],
                                info['ratings'][5]['percent'], info['ratings'][5]['votes'],
-                               info['ratings'][6]['percent'],
-                               info['ratings'][6]['votes'], info['ratings'][7]['percent'], info['ratings'][7]['votes'],
+                               info['ratings'][6]['percent'], info['ratings'][6]['votes'],
+                               info['ratings'][7]['percent'], info['ratings'][7]['votes'],
                                info['ratings'][8]['percent'], info['ratings'][8]['votes'],
-                               info['ratings'][9]['percent'],
-                               info['ratings'][9]['votes']))
+                               info['ratings'][9]['percent'], info['ratings'][9]['votes']))
+
+    cursor.execute('SELECT * FROM shows where title is "Wheel of Time"')
+    cursor.fetchone()
 
     wheel_of_time_id = 'tt0331080'
     w = requests.get(user_url + config.apiKey + "/" + wheel_of_time_id)
@@ -117,7 +128,7 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
                 four_rating_votes, three_rating_percentage, three_rating_votes, two_rating_percentage, two_rating_votes,
                 one_rating_percentage, one_rating_votes)
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                   (wheel_info['imDbId'], wheel_info['totalRating'],
+                   (wheel_of_time_id, wheel_info['totalRating'],
                     wheel_info['totalRatingVotes'], wheel_info['ratings'][0]['percent'],
                     wheel_info['ratings'][0]['votes'], wheel_info['ratings'][1]['percent'],
                     wheel_info['ratings'][1]['votes'], wheel_info['ratings'][2]['percent'],
@@ -145,6 +156,7 @@ def main():
     print(type(conn))
     setup_db(cursor)
     fill_shows_table(cursor, shows)
+    wheel_of_time_into_shows_table(cursor)
     fill_ratings_table(cursor)
     close_db(conn)
 
