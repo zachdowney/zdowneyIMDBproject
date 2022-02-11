@@ -1,6 +1,6 @@
 import requests
 import pprint
-import config
+import secrets
 import sys
 
 
@@ -10,7 +10,7 @@ def get_data():
     # showed me how to use a secrets file
     # https://www.youtube.com/watch?v=QovKok-2u9k
     # showed me how to get data and what pprint is
-    response = requests.get(base_url + config.apiKey)
+    response = requests.get(base_url + secrets.apiKey)
     show_list = response.json()
     shows = show_list['items']
     return shows
@@ -22,7 +22,7 @@ def user_ratings(self):
     for i in range(0, 200):
         if shows[i]['rank'] == '1' or shows[i]['rank'] == '50' \
                 or shows[i]['rank'] == '100' or shows[i]['rank'] == '200':
-            r = requests.get(user_url + config.apiKey + "/" + shows[i]['id'])
+            r = requests.get(user_url + secrets.apiKey + "/" + shows[i]['id'])
             info = r.json()
             print("User rating data for the number " + shows[i]['rank'] + " ranked show:")
             pprint.pprint(info)
@@ -32,7 +32,7 @@ def user_ratings(self):
 def wheel_user_ratings():
     user_url = "https://imdb-api.com/en/API/UserRatings/"
     wheel_of_time_id = 'tt0331080'
-    w = requests.get(user_url + config.apiKey + "/" + wheel_of_time_id)
+    w = requests.get(user_url + secrets.apiKey + "/" + wheel_of_time_id)
     wheel_info = w.json()
     print("User rating data for Wheel of Time:")
     pprint.pprint(wheel_info)

@@ -1,12 +1,12 @@
 import sqlite3
 import requests
-import config
+import secrets
 from typing import Tuple
 
 
 def get_data():
     base_url = "https://imdb-api.com/en/API/Top250TVs/"
-    response = requests.get(base_url + config.apiKey)
+    response = requests.get(base_url + secrets.apiKey)
     show_list = response.json()
     shows = show_list['items']
     return shows
@@ -92,7 +92,7 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
     for i in range(len(shows)):
         if shows[i]['rank'] == '1' or shows[i]['rank'] == '50' \
                 or shows[i]['rank'] == '100' or shows[i]['rank'] == '201':
-            r = requests.get(user_url + config.apiKey + "/" + shows[i]['id'])
+            r = requests.get(user_url + secrets.apiKey + "/" + shows[i]['id'])
             info = r.json()
             cursor.execute('''INSERT INTO ratings (imDbId, totalRating, totalRatingVotes,
             ten_rating_percentage, ten_rating_votes, nine_rating_percentage, nine_rating_votes,
@@ -118,7 +118,7 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
     cursor.fetchone()
 
     wheel_of_time_id = 'tt0331080'
-    w = requests.get(user_url + config.apiKey + "/" + wheel_of_time_id)
+    w = requests.get(user_url + secrets.apiKey + "/" + wheel_of_time_id)
     wheel_info = w.json()
     cursor.execute('''INSERT INTO ratings (imDbId, totalRating, totalRatingVotes,
                 ten_rating_percentage, ten_rating_votes, nine_rating_percentage, nine_rating_votes,
