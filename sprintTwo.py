@@ -2,15 +2,7 @@ import sqlite3
 import requests
 import secrets
 from typing import Tuple
-
-
-def get_data():
-    base_url = "https://imdb-api.com/en/API/Top250TVs/"
-    response = requests.get(base_url + secrets.apiKey)
-    show_list = response.json()
-    shows = show_list['items']
-    return shows
-
+import sprintOne
 
 # https://www.youtube.com/watch?v=byHcYRpMgI4
 # this whole video helped me a ton with a creating and filling the database
@@ -23,7 +15,7 @@ def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
     return connection, cursor
 
 
-def setup_db(cursor: sqlite3.Cursor):
+def setup_shows_db(cursor: sqlite3.Cursor):
     cursor.execute('''CREATE TABLE IF NOT EXISTS shows (
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
@@ -60,6 +52,17 @@ def setup_db(cursor: sqlite3.Cursor):
             FOREIGN KEY (imDbId) REFERENCES shows (id)
             ON DELETE CASCADE
             );''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS popular_tv (
+            id TEXT PRIMARY KEY,
+            rank INTEGER DEFAULT 0,
+            rankUpDown TEXT NOT NULL,
+            title TEXT NOT NULL,
+            fullTitle TEXT NOT NULL,
+            year INTEGER DEFAULT 0,
+            crew TEXT NOT NULL,
+            imDbRating REAL DEFAULT 0,
+            imDbRatingCount INTEGER DEFAULT 0
+            );''')
 
 
 def fill_shows_table(cursor: sqlite3.Cursor, shows):
@@ -86,12 +89,11 @@ def wheel_of_time_into_shows_table(cursor: sqlite3.Cursor):
 
 
 def fill_ratings_table(cursor: sqlite3.Cursor):
-    shows = get_data()
+    shows = sprintOne.get_data("https://imdb-api.com/en/API/Top250TVs/")
     user_url = "https://imdb-api.com/en/API/UserRatings/"
-    print('\n')
     for i in range(len(shows)):
         if shows[i]['rank'] == '1' or shows[i]['rank'] == '50' \
-                or shows[i]['rank'] == '100' or shows[i]['rank'] == '201':
+                or shows[i]['rank'] == '100' or shows[i]['rank'] == '200':
             r = requests.get(user_url + secrets.apiKey + "/" + shows[i]['id'])
             info = r.json()
             cursor.execute('''INSERT INTO ratings (imDbId, totalRating, totalRatingVotes,
@@ -148,18 +150,3 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
 def close_db(connection: sqlite3.Connection):
     connection.commit()
     connection.close()
-
-
-def main():
-    shows = get_data()
-    conn, cursor = open_db('shows.db')
-    print(type(conn))
-    setup_db(cursor)
-    fill_shows_table(cursor, shows)
-    wheel_of_time_into_shows_table(cursor)
-    fill_ratings_table(cursor)
-    close_db(conn)
-
-
-if __name__ == '__main__':
-    main()
