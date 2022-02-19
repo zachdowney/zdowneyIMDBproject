@@ -15,7 +15,7 @@ def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
     return connection, cursor
 
 
-def setup_shows_db(cursor: sqlite3.Cursor):
+def setup_db(cursor: sqlite3.Cursor):
     cursor.execute('''CREATE TABLE IF NOT EXISTS shows (
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
@@ -25,7 +25,7 @@ def setup_shows_db(cursor: sqlite3.Cursor):
         imDbRating REAL DEFAULT 0,
         imDbRatingCount INTEGER DEFAULT 0
         );''')
-    cursor.execute('''CREATE TABLE IF NOT EXISTS ratings (
+    cursor.execute('''CREATE TABLE IF NOT EXISTS show_ratings (
             imDbID TEXT NOT NULL,
             totalRating INTEGER DEFAULT 0,
             totalRatingVotes INTEGER DEFAULT 0,
@@ -55,7 +55,7 @@ def setup_shows_db(cursor: sqlite3.Cursor):
     cursor.execute('''CREATE TABLE IF NOT EXISTS popular_tv (
             id TEXT PRIMARY KEY,
             rank INTEGER DEFAULT 0,
-            rankUpDown TEXT NOT NULL,
+            rankUpDown INTEGER DEFAULT 0,
             title TEXT NOT NULL,
             fullTitle TEXT NOT NULL,
             year INTEGER DEFAULT 0,
@@ -63,15 +63,62 @@ def setup_shows_db(cursor: sqlite3.Cursor):
             imDbRating REAL DEFAULT 0,
             imDbRatingCount INTEGER DEFAULT 0
             );''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS movies (
+            id TEXT PRIMARY KEY,
+            title TEXT NOT NULL,
+            fullTitle TEXT NOT NULL,
+            year INTEGER DEFAULT 0,
+            crew TEXT NOT NULL,
+            imDbRating REAL DEFAULT 0,
+            imDbRatingCount INTEGER DEFAULT 0
+            );''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS popular_movies (
+            id TEXT PRIMARY KEY,
+            rank INTEGER DEFAULT 0,
+            rankUpDown INTEGER DEFAULT 0,
+            title TEXT NOT NULL,
+            fullTitle TEXT NOT NULL,
+            year INTEGER DEFAULT 0,
+            crew TEXT NOT NULL,
+            imDbRating REAL DEFAULT 0,
+            imDbRatingCount INTEGER DEFAULT 0
+            );''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS movie_ratings (
+                imDbID TEXT NOT NULL,
+                totalRating INTEGER DEFAULT 0,
+                totalRatingVotes INTEGER DEFAULT 0,
+                ten_rating_percentage REAL DEFAULT 0,
+                ten_rating_votes INTEGER DEFAULT 0,
+                nine_rating_percentage REAL DEFAULT 0,
+                nine_rating_votes INTEGER DEFAULT 0,
+                eight_rating_percentage REAL DEFAULT 0,
+                eight_rating_votes INTEGER DEFAULT 0,
+                seven_rating_percentage REAL DEFAULT 0,
+                seven_rating_votes INTEGER DEFAULT 0,
+                six_rating_percentage REAL DEFAULT 0,
+                six_rating_votes INTEGER DEFAULT 0,
+                five_rating_percentage REAL DEFAULT 0,
+                five_rating_votes INTEGER DEFAULT 0,
+                four_rating_percentage REAL DEFAULT 0,
+                four_rating_votes INTEGER DEFAULT 0,
+                three_rating_percentage REAL DEFAULT 0,
+                three_rating_votes INTEGER DEFAULT 0,
+                two_rating_percentage REAL DEFAULT 0,
+                two_rating_votes INTEGER DEFAULT 0,
+                one_rating_percentage REAL DEFAULT 0,
+                one_rating_votes INTEGER DEFAULT 0,
+                FOREIGN KEY (imDbId) REFERENCES movies (id)
+                ON DELETE CASCADE
+                );''')
 
 
-def fill_shows_table(cursor: sqlite3.Cursor, shows):
-    for i in range(0, len(shows)):
+def fill_shows_table(cursor: sqlite3.Cursor, data):
+    for i in range(0, len(data)):
         cursor.execute('''INSERT INTO shows (id, title,
                        fullTitle, year, crew, imDbRating, imDbRatingCount)
                        VALUES(?, ?, ?, ?, ?, ?, ?)''',
-                       (shows[i]['id'], shows[i]['title'], shows[i]['fullTitle'], shows[i]['year'],
-                        shows[i]['crew'], shows[i]['imDbRating'], shows[i]['imDbRatingCount']))
+                       (data[i]['id'], data[i]['title'], data[i]['fullTitle'], data[i]['year'],
+                        data[i]['crew'], data[i]['imDbRating'], data[i]['imDbRatingCount']))
 
     cursor.execute('SELECT rowid, * FROM shows')
     cursor.fetchall()
@@ -88,15 +135,14 @@ def wheel_of_time_into_shows_table(cursor: sqlite3.Cursor):
     cursor.fetchone()
 
 
-def fill_ratings_table(cursor: sqlite3.Cursor):
-    shows = sprintOne.get_data("https://imdb-api.com/en/API/Top250TVs/")
+def fill_show_ratings_table(cursor: sqlite3.Cursor, data):
     user_url = "https://imdb-api.com/en/API/UserRatings/"
-    for i in range(len(shows)):
-        if shows[i]['rank'] == '1' or shows[i]['rank'] == '50' \
-                or shows[i]['rank'] == '100' or shows[i]['rank'] == '200':
-            r = requests.get(user_url + secrets.apiKey + "/" + shows[i]['id'])
+    for i in range(len(data)):
+        if data[i]['rank'] == '1' or data[i]['rank'] == '50' \
+                or data[i]['rank'] == '100' or data[i]['rank'] == '200':
+            r = requests.get(user_url + secrets.apiKey + "/" + data[i]['id'])
             info = r.json()
-            cursor.execute('''INSERT INTO ratings (imDbId, totalRating, totalRatingVotes,
+            cursor.execute('''INSERT INTO show_ratings (imDbId, totalRating, totalRatingVotes,
             ten_rating_percentage, ten_rating_votes, nine_rating_percentage, nine_rating_votes,
             eight_rating_percentage, eight_rating_votes, seven_rating_percentage, seven_rating_votes,
             six_rating_percentage, six_rating_votes, five_rating_percentage, five_rating_votes, four_rating_percentage,
@@ -122,7 +168,7 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
     wheel_of_time_id = 'tt0331080'
     w = requests.get(user_url + secrets.apiKey + "/" + wheel_of_time_id)
     wheel_info = w.json()
-    cursor.execute('''INSERT INTO ratings (imDbId, totalRating, totalRatingVotes,
+    cursor.execute('''INSERT INTO show_ratings (imDbId, totalRating, totalRatingVotes,
                 ten_rating_percentage, ten_rating_votes, nine_rating_percentage, nine_rating_votes,
                 eight_rating_percentage, eight_rating_votes, seven_rating_percentage, seven_rating_votes,
                 six_rating_percentage, six_rating_votes,
@@ -143,7 +189,7 @@ def fill_ratings_table(cursor: sqlite3.Cursor):
                     wheel_info['ratings'][8]['votes'], wheel_info['ratings'][9]['percent'],
                     wheel_info['ratings'][9]['votes']))
 
-    cursor.execute('SELECT rowid, * FROM ratings')
+    cursor.execute('SELECT rowid, * FROM show_ratings')
     cursor.fetchall()
 
 
