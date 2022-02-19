@@ -5,15 +5,14 @@ import sys
 
 
 def get_data(url):
-    base_url = url
     # https://medium.com/black-tech-diva/hide-your-api-keys-7635e181a06c
     # showed me how to use a secrets file
     # https://www.youtube.com/watch?v=QovKok-2u9k
     # showed me how to get data and what pprint is
-    response = requests.get(base_url + secrets.apiKey)
-    show_list = response.json()
-    shows = show_list['items']
-    return shows
+    response = requests.get(url + secrets.apiKey)
+    data_list = response.json()
+    data = data_list['items']
+    return data
 
 
 def user_ratings(self):
