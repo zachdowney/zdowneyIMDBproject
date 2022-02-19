@@ -4,8 +4,8 @@ import secrets
 import sys
 
 
-def get_data():
-    base_url = "https://imdb-api.com/en/API/Top250TVs/"
+def get_data(url):
+    base_url = url
     # https://medium.com/black-tech-diva/hide-your-api-keys-7635e181a06c
     # showed me how to use a secrets file
     # https://www.youtube.com/watch?v=QovKok-2u9k
@@ -17,7 +17,7 @@ def get_data():
 
 
 def user_ratings(self):
-    shows = get_data()
+    shows = get_data("https://imdb-api.com/en/API/Top250TVs/")
     user_url = "https://imdb-api.com/en/API/UserRatings/"
     for i in range(0, 200):
         if shows[i]['rank'] == '1' or shows[i]['rank'] == '50' \
@@ -39,11 +39,11 @@ def wheel_user_ratings():
 
 
 def list_shows(self):
-    shows = get_data()
+    shows = get_data("https://imdb-api.com/en/API/Top250TVs/")
     print('\n')
     print("List of Top 250 shows:")
     print('\n')
-    for i in range(0, 250):
+    for i in range(0, len(shows)):
         print(shows[i])
         print('\n')
 
@@ -58,12 +58,3 @@ def save_data(data, filename='data.txt'):
     list_shows(data)
 
     sys.stdout.close()
-
-
-def main():
-    shows = get_data()
-    save_data(shows)
-
-
-if __name__ == '__main__':
-    main()
