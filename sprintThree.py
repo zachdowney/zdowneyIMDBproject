@@ -45,36 +45,30 @@ def fill_movies_table(cursor: sqlite3.Cursor, data):
 
 
 def fill_movie_ratings_table(cursor: sqlite3.Cursor, data):
-    user_url = "https://imdb-api.com/en/API/UserRatings/"
-    rank_change_list = []
-    for i in range(len(data)):
-        rank_change_list += data[i]['rankUpDown']
-        sorted(rank_change_list)
+    ratings_url = "https://imdb-api.com/en/API/Ratings/"
+    rank_changes = []
+    for i in range(0, len(data)):
+        if data[i]['rankUpDown'].startswith('+'):
+            data[i]['rankUpDown'] = data[i]['rankUpDown'][1:]
+        if "," in data[i]['rankUpDown'][0:4]:
+            data[i]['rankUpDown'] = data[i]['rankUpDown'].replace(",", "")
+        float(data[i]['rankUpDown'])
+        rank_changes.append(data[i]['rankUpDown'])
 
+    changes = sorted(rank_changes, key=int)
+    for i in range(0, len(data)):
+        if data[i]['rankUpDown'] == changes[0] or data[i]['rankUpDown'] == changes[99] or \
+                data[i]['rankUpDown'] == changes[96] or data[i]['rankUpDown'] == changes[97]:
+            r = requests.get(ratings_url + secrets.apiKey + "/" + data[i]['id'])
+            info = r.json()
+            cursor.execute('''INSERT INTO movie_ratings (imDbId, title, fullTitle, type, year, imDb, metacritic, 
+                                    theMovieDb, rottenTomatoes, tV_com, filmAffinity)
+                                        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                           (
+                               info['imDbId'], info['title'], info['fullTitle'], info['type'],
+                               info['year'], info['imDb'], info['metacritic'], info['theMovieDb'],
+                               info['rottenTomatoes'], info['tV_com'], info['filmAffinity']))
 
-    #         r = requests.get(user_url + secrets.apiKey + "/" + data[i]['id'])
-    #         info = r.json()
-    #         cursor.execute('''INSERT INTO movie_ratings (imDbId, totalRating, totalRatingVotes,
-    #         ten_rating_percentage, ten_rating_votes, nine_rating_percentage, nine_rating_votes,
-    #         eight_rating_percentage, eight_rating_votes, seven_rating_percentage, seven_rating_votes,
-    #         six_rating_percentage, six_rating_votes, five_rating_percentage, five_rating_votes, four_rating_percentage,
-    #         four_rating_votes, three_rating_percentage, three_rating_votes, two_rating_percentage, two_rating_votes,
-    #         one_rating_percentage, one_rating_votes)
-    #         VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-    #                        (
-    #                            info['imDbId'], info['totalRating'], info['totalRatingVotes'],
-    #                            info['ratings'][0]['percent'], info['ratings'][0]['votes'],
-    #                            info['ratings'][1]['percent'], info['ratings'][1]['votes'],
-    #                            info['ratings'][2]['percent'], info['ratings'][2]['votes'],
-    #                            info['ratings'][3]['percent'], info['ratings'][3]['votes'],
-    #                            info['ratings'][4]['percent'], info['ratings'][4]['votes'],
-    #                            info['ratings'][5]['percent'], info['ratings'][5]['votes'],
-    #                            info['ratings'][6]['percent'], info['ratings'][6]['votes'],
-    #                            info['ratings'][7]['percent'], info['ratings'][7]['votes'],
-    #                            info['ratings'][8]['percent'], info['ratings'][8]['votes'],
-    #                            info['ratings'][9]['percent'], info['ratings'][9]['votes']))
-    #
-    # cursor.execute('SELECT rowid, * FROM movie_ratings')
-    # cursor.fetchall()
-
+        cursor.execute('SELECT * FROM movie_ratings')
+        cursor.fetchall()
 
