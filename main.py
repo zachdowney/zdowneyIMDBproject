@@ -23,7 +23,7 @@ def main():
     sprintThree.fill_pop_tv_table(cursor, pop_tv)
     sprintThree.fill_movies_table(cursor, movies)
     sprintThree.fill_pop_movies_table(cursor, pop_movies)
-#   sprintThree.fill_movie_ratings_table(cursor, pop_movies)
+    sprintThree.fill_movie_ratings_table(cursor, pop_movies)
     sprintTwo.close_db(conn)
 
 
