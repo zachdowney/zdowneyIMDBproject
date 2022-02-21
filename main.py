@@ -1,8 +1,3 @@
-import sqlite3
-import requests
-import secrets
-from typing import Tuple
-
 import sprintThree
 import sprintTwo
 import sprintOne
@@ -16,13 +11,18 @@ def main():
     sprintOne.save_data(shows)
 
     conn, cursor = sprintTwo.open_db('shows.db')
-    sprintTwo.setup_db(cursor)
+    sprintTwo.create_shows_table(cursor)
     sprintTwo.fill_shows_table(cursor, shows)
     sprintTwo.wheel_of_time_into_shows_table(cursor)
+    sprintTwo.create_show_ratings_table(cursor)
     sprintTwo.fill_show_ratings_table(cursor, shows)
+    sprintThree.create_popular_tv_table(cursor)
     sprintThree.fill_pop_tv_table(cursor, pop_tv)
+    sprintThree.create_movies_table(cursor)
     sprintThree.fill_movies_table(cursor, movies)
+    sprintThree.create_popular_movies_table(cursor)
     sprintThree.fill_pop_movies_table(cursor, pop_movies)
+    sprintThree.create_movie_ratings_table(cursor)
     sprintThree.fill_movie_ratings_table(cursor, pop_movies)
     sprintTwo.close_db(conn)
 
