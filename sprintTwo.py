@@ -90,8 +90,8 @@ def fill_show_ratings_table(cursor: sqlite3.Cursor, data):
                 cursor.execute('''INSERT INTO show_ratings (imDbId, totalRating, totalRatingVotes,
                             ten_rating_percentage, ten_rating_votes, nine_rating_percentage, nine_rating_votes,
                             eight_rating_percentage, eight_rating_votes, seven_rating_percentage, seven_rating_votes,
-                            six_rating_percentage, six_rating_votes, five_rating_percentage, five_rating_votes, 
-                            four_rating_percentage, four_rating_votes, three_rating_percentage, three_rating_votes, 
+                            six_rating_percentage, six_rating_votes, five_rating_percentage, five_rating_votes,
+                            four_rating_percentage, four_rating_votes, three_rating_percentage, three_rating_votes,
                             two_rating_percentage, two_rating_votes, one_rating_percentage, one_rating_votes)
                             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                                (

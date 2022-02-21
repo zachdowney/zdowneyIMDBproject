@@ -1,5 +1,3 @@
-import doctest
-
 import sprintTwo
 import sprintOne
 import sprintThree
