@@ -2,7 +2,6 @@ import sqlite3
 import requests
 import secrets
 from typing import Tuple
-import sprintOne
 
 # https://www.youtube.com/watch?v=byHcYRpMgI4
 # this whole video helped me a ton with a creating and filling the database
@@ -15,7 +14,7 @@ def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
     return connection, cursor
 
 
-def setup_db(cursor: sqlite3.Cursor):
+def create_shows_table(cursor: sqlite3.Cursor):
     cursor.execute('''CREATE TABLE IF NOT EXISTS shows (
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
@@ -25,6 +24,9 @@ def setup_db(cursor: sqlite3.Cursor):
         imDbRating REAL DEFAULT 0,
         imDbRatingCount INTEGER DEFAULT 0
         );''')
+
+
+def create_show_ratings_table(cursor: sqlite3.Cursor):
     cursor.execute('''CREATE TABLE IF NOT EXISTS show_ratings (
             imDbID TEXT NOT NULL,
             totalRating INTEGER DEFAULT 0,
@@ -52,52 +54,6 @@ def setup_db(cursor: sqlite3.Cursor):
             FOREIGN KEY (imDbId) REFERENCES shows (id)
             ON DELETE CASCADE
             );''')
-    cursor.execute('''CREATE TABLE IF NOT EXISTS popular_tv (
-            id TEXT PRIMARY KEY,
-            rank INTEGER DEFAULT 0,
-            rankUpDown INTEGER DEFAULT 0,
-            title TEXT NOT NULL,
-            fullTitle TEXT NOT NULL,
-            year INTEGER DEFAULT 0,
-            crew TEXT NOT NULL,
-            imDbRating REAL DEFAULT 0,
-            imDbRatingCount INTEGER DEFAULT 0
-            );''')
-    cursor.execute('''CREATE TABLE IF NOT EXISTS movies (
-            id TEXT PRIMARY KEY,
-            title TEXT NOT NULL,
-            fullTitle TEXT NOT NULL,
-            year INTEGER DEFAULT 0,
-            crew TEXT NOT NULL,
-            imDbRating REAL DEFAULT 0,
-            imDbRatingCount INTEGER DEFAULT 0
-            );''')
-    cursor.execute('''CREATE TABLE IF NOT EXISTS popular_movies (
-            id TEXT PRIMARY KEY,
-            rank INTEGER DEFAULT 0,
-            rankUpDown INTEGER DEFAULT 0,
-            title TEXT NOT NULL,
-            fullTitle TEXT NOT NULL,
-            year INTEGER DEFAULT 0,
-            crew TEXT NOT NULL,
-            imDbRating REAL DEFAULT 0,
-            imDbRatingCount INTEGER DEFAULT 0
-            );''')
-    cursor.execute('''CREATE TABLE IF NOT EXISTS movie_ratings (
-                imDbID TEXT NOT NULL,
-                title TEXT,
-                fullTitle TEXT,
-                type TEXT,
-                year INTEGER DEFAULT 0,
-                imDb REAL DEFAULT 0,
-                metacritic REAL DEFAULT 0,
-                theMovieDb REAL DEFAULT 0,
-                rottenTomatoes REAL DEFAULT 0,
-                tV_com REAL DEFAULT 0,
-                filmAffinity INTEGER DEFAULT 0,
-                FOREIGN KEY (imDbId) REFERENCES movies (id)
-                ON DELETE CASCADE
-                );''')
 
 
 def fill_shows_table(cursor: sqlite3.Cursor, data):
