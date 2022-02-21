@@ -126,7 +126,7 @@ def fill_movie_ratings_table(cursor: sqlite3.Cursor, data):
                 data[i]['rankUpDown'] == rank_changes[1] or data[i]['rankUpDown'] == rank_changes[0]:
             r = requests.get(ratings_url + secrets.apiKey + "/" + data[i]['id'])
             info = r.json()
-            cursor.execute('''INSERT INTO movie_ratings (imDbId, title, fullTitle, type, year, imDb, metacritic, 
+            cursor.execute('''INSERT INTO movie_ratings (imDbId, title, fullTitle, type, year, imDb, metacritic,
                                     theMovieDb, rottenTomatoes, tV_com, filmAffinity)
                                         VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                            (
