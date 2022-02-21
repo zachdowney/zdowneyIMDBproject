@@ -155,3 +155,17 @@ def test_popular_movies_table():
 #     cursor.execute("""SELECT * FROM movie_ratings""")
 #     cursor.fetchall()
 #     sprintTwo.close_db(conn)
+
+
+def main():
+    test_get_shows()
+    test_show_db()
+    test_movie_db()
+    test_popular_tv_table()
+    test_popular_movies_table()
+    test_find_biggest_movers()
+    test_wrong_biggest_movers()
+
+
+if __name__ == '__main__':
+    main()
