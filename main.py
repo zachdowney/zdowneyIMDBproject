@@ -10,7 +10,7 @@ def main():
     shows = sprintOne.get_data("https://imdb-api.com/en/API/Top250TVs/")
     sprintOne.save_data(shows)
 
-    conn, cursor = sprintTwo.open_db('shows.db')
+    conn, cursor = sprintTwo.open_db('shows_db.sqlite')
     sprintTwo.create_shows_table(cursor)
     sprintTwo.fill_shows_table(cursor, shows)
     sprintTwo.wheel_of_time_into_shows_table(cursor)
