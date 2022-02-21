@@ -18,7 +18,7 @@ def test_show_db():
             WUtYTVkNGE3OWU4NWRkL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMjYwNDA2MDE@._V1_UX128_CR0,3,128,176_AL_.jpg",
               "crew": "Zach Downey", "imDbRating": "9.9",
               "imDbRatingCount": "25000"}]
-    conn, cursor = sprintTwo.open_db('test.db')
+    conn, cursor = sprintTwo.open_db('test_db.sqlite')
     print(type(conn))
     sprintTwo.create_shows_table(cursor)
     sprintTwo.fill_shows_table(cursor, shows)
@@ -69,7 +69,7 @@ def test_movie_db():
                "year": "2020",
                "crew": "Zach Downey", "imDbRating": "9.1",
                "imDbRatingCount": "100000"}]
-    conn, cursor = sprintTwo.open_db('test.db')
+    conn, cursor = sprintTwo.open_db('test_db.sqlite')
     print(type(conn))
     sprintThree.create_movies_table(cursor)
     sprintThree.fill_movies_table(cursor, movies)
@@ -85,7 +85,7 @@ def test_popular_tv_table():
                    "year": "2022",
                    "crew": "Zach Downey", "imDbRating": "9.9",
                    "imDbRatingCount": "25000"}]
-    conn, cursor = sprintTwo.open_db('test.db')
+    conn, cursor = sprintTwo.open_db('test_db.sqlite')
     print(type(conn))
     sprintThree.create_popular_tv_table(cursor)
     sprintThree.fill_pop_tv_table(cursor, popular_tv)
@@ -101,7 +101,7 @@ def test_popular_movies_table():
                       "year": "2022",
                       "crew": "Zach Downey", "imDbRating": "9.3",
                       "imDbRatingCount": "100"}]
-    conn, cursor = sprintTwo.open_db('test.db')
+    conn, cursor = sprintTwo.open_db('test_db.sqlite')
     print(type(conn))
     sprintThree.create_popular_movies_table(cursor)
     sprintThree.fill_pop_movies_table(cursor, popular_movie)
