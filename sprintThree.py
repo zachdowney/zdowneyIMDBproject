@@ -1,4 +1,6 @@
 import sqlite3
+from sqlite3 import IntegrityError
+
 import requests
 import secrets
 
@@ -45,7 +47,7 @@ def create_popular_movies_table(cursor: sqlite3.Cursor):
 
 def create_movie_ratings_table(cursor: sqlite3.Cursor):
     cursor.execute('''CREATE TABLE IF NOT EXISTS movie_ratings (
-                imDbID TEXT NOT NULL,
+                imDbID TEXT NOT NULL UNIQUE,
                 title TEXT,
                 fullTitle TEXT,
                 type TEXT,
@@ -63,40 +65,55 @@ def create_movie_ratings_table(cursor: sqlite3.Cursor):
 
 def fill_pop_tv_table(cursor: sqlite3.Cursor, data):
     for i in range(0, len(data)):
-        cursor.execute('''INSERT INTO popular_tv (id, rank, rankUpDown, title,
-                       fullTitle, year, crew, imDbRating, imDbRatingCount)
-                       VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                       (data[i]['id'], data[i]['rank'], data[i]['rankUpDown'], data[i]['title'],
-                        data[i]['fullTitle'], data[i]['year'], data[i]['crew'], data[i]['imDbRating'],
-                        data[i]['imDbRatingCount']))
+        try:
+            cursor.execute('''INSERT INTO popular_tv (id, rank, rankUpDown, title,
+                           fullTitle, year, crew, imDbRating, imDbRatingCount)
+                           VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                           (data[i]['id'], data[i]['rank'], data[i]['rankUpDown'], data[i]['title'],
+                            data[i]['fullTitle'], data[i]['year'], data[i]['crew'], data[i]['imDbRating'],
+                            data[i]['imDbRatingCount']))
 
-    cursor.execute('SELECT rowid, * FROM popular_tv')
-    cursor.fetchall()
+            cursor.execute('SELECT rowid, * FROM popular_tv')
+            cursor.fetchall()
+        except IntegrityError:
+            cursor.execute('''DROP TABLE popular_tv''')
+            create_popular_tv_table(cursor)
+            fill_pop_tv_table(cursor, data)
 
 
 def fill_pop_movies_table(cursor: sqlite3.Cursor, data):
     for i in range(0, len(data)):
-        cursor.execute('''INSERT INTO popular_movies (id, rank, rankUpDown, title,
-                       fullTitle, year, crew, imDbRating, imDbRatingCount)
-                       VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                       (data[i]['id'], data[i]['rank'], data[i]['rankUpDown'], data[i]['title'],
-                        data[i]['fullTitle'], data[i]['year'], data[i]['crew'], data[i]['imDbRating'],
-                        data[i]['imDbRatingCount']))
+        try:
+            cursor.execute('''INSERT INTO popular_movies (id, rank, rankUpDown, title,
+                           fullTitle, year, crew, imDbRating, imDbRatingCount)
+                           VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                           (data[i]['id'], data[i]['rank'], data[i]['rankUpDown'], data[i]['title'],
+                            data[i]['fullTitle'], data[i]['year'], data[i]['crew'], data[i]['imDbRating'],
+                            data[i]['imDbRatingCount']))
 
-    cursor.execute('SELECT rowid, * FROM popular_movies')
-    cursor.fetchall()
+            cursor.execute('SELECT rowid, * FROM popular_movies')
+            cursor.fetchall()
+        except IntegrityError:
+            cursor.execute('''DROP TABLE popular_movies''')
+            create_popular_movies_table(cursor)
+            fill_pop_movies_table(cursor, data)
 
 
 def fill_movies_table(cursor: sqlite3.Cursor, data):
     for i in range(0, len(data)):
-        cursor.execute('''INSERT INTO movies (id, title,
-                       fullTitle, year, crew, imDbRating, imDbRatingCount)
-                       VALUES(?, ?, ?, ?, ?, ?, ?)''',
-                       (data[i]['id'], data[i]['title'], data[i]['fullTitle'], data[i]['year'],
-                        data[i]['crew'], data[i]['imDbRating'], data[i]['imDbRatingCount']))
+        try:
+            cursor.execute('''INSERT INTO movies (id, title,
+                           fullTitle, year, crew, imDbRating, imDbRatingCount)
+                           VALUES(?, ?, ?, ?, ?, ?, ?)''',
+                           (data[i]['id'], data[i]['title'], data[i]['fullTitle'], data[i]['year'],
+                            data[i]['crew'], data[i]['imDbRating'], data[i]['imDbRatingCount']))
 
-    cursor.execute('SELECT rowid, * FROM movies')
-    cursor.fetchall()
+            cursor.execute('SELECT rowid, * FROM movies')
+            cursor.fetchall()
+        except IntegrityError:
+            cursor.execute('''DROP TABLE movies''')
+            create_movies_table(cursor)
+            fill_movies_table(cursor, data)
 
 
 def find_biggest_movers(data):
@@ -122,17 +139,22 @@ def fill_movie_ratings_table(cursor: sqlite3.Cursor, data):
     ratings_url = "https://imdb-api.com/en/API/Ratings/"
     rank_changes = find_biggest_movers(data)
     for i in range(0, len(data)):
-        if data[i]['rankUpDown'] == rank_changes[3] or data[i]['rankUpDown'] == rank_changes[2] or \
-                data[i]['rankUpDown'] == rank_changes[1] or data[i]['rankUpDown'] == rank_changes[0]:
-            r = requests.get(ratings_url + secrets.apiKey + "/" + data[i]['id'])
-            info = r.json()
-            cursor.execute('''INSERT INTO movie_ratings (imDbId, title, fullTitle, type, year, imDb, metacritic,
-                                    theMovieDb, rottenTomatoes, tV_com, filmAffinity)
-                                        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                           (
-                               info['imDbId'], info['title'], info['fullTitle'], info['type'],
-                               info['year'], info['imDb'], info['metacritic'], info['theMovieDb'],
-                               info['rottenTomatoes'], info['tV_com'], info['filmAffinity']))
+        try:
+            if data[i]['rankUpDown'] == rank_changes[3] or data[i]['rankUpDown'] == rank_changes[2] or \
+                    data[i]['rankUpDown'] == rank_changes[1] or data[i]['rankUpDown'] == rank_changes[0]:
+                r = requests.get(ratings_url + secrets.apiKey + "/" + data[i]['id'])
+                info = r.json()
+                cursor.execute('''INSERT INTO movie_ratings (imDbId, title, fullTitle, type, year, imDb, metacritic,
+                                        theMovieDb, rottenTomatoes, tV_com, filmAffinity)
+                                            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                               (
+                                   info['imDbId'], info['title'], info['fullTitle'], info['type'],
+                                   info['year'], info['imDb'], info['metacritic'], info['theMovieDb'],
+                                   info['rottenTomatoes'], info['tV_com'], info['filmAffinity']))
 
-        cursor.execute('SELECT * FROM movie_ratings')
-        cursor.fetchall()
+            cursor.execute('SELECT * FROM movie_ratings')
+            cursor.fetchall()
+        except IntegrityError:
+            cursor.execute('''DROP TABLE movie_ratings''')
+            create_movie_ratings_table(cursor)
+            fill_movie_ratings_table(cursor, data)
