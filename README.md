@@ -1,9 +1,6 @@
 # zdowneyIMDBproject
 1. Zach Downey
-2. I think you only need to import requests, import sprintTwo into test.py. When I created the shows database, you have to make sure the shows.db file is empty,
-   for some reason, if you try to run it twice it says "UNIQUE constraint failed" etc. Same things goes when you are testing the test.py second test. You need to make sure 
-   you delete anything from the tests.db file to run it. Other than that, I think every thing works normally.
-3. My project grabs data from an API, creates a database and creates two tables, one for shows and one for user ratings. It puts the top 250 shows in the shows table
-   followed by the "Wheel of time" to make 251 using a for loop. Then using another for loop, it takes the id from shows in the shows table and puts specific ones into a ratings table, which results in 5 entries in the ratings table. I also have two test methods in test.py to ensure the data set of 250 shows contains 250 shows and another one to test creating a database and inputing one entry. 
-4. My database was created and then creates two tables shows and ratings, to view the tables I used DB browser and opened database 'shows.db' and then to view my test table I open tests.db. Also, I need to make sure both shows.db and tests.db are empty on pycharm to ensure the program will run again. 
-5. I don't know what my program is missing but I wasn't able to get the pytest workflows to work unfortunately. 
+2. I think you only need to import requests, import sprintOne, sprintTwo, and sprintThree into test.py and main.py. import sqlite3, requests, secrets, and from typing import Tuple into all three sprint.py files, Run main.py.
+3. My project grabs data from different API urls, using an API key. It prints out list of top 250 shows and show user ratings to data.txt file, then it creates a database called 'shows_db.sqlite' and has different functions creating and filling six different tables that go into that database. Then, I have a test file to test all table creating and filling functions and test my function for getting the biggest movers for the movie ratings table. 
+4. My database was created and then creates and fills six tables: 'shows', 'movies', 'popular_tv', 'popular_movies', 'show_ratings', 'movie_ratings'. I used DB browser to view the database tables. 
+5. I believe I did the create new table and write to table test correctly for four table functions, but I am not sure if that's what you were looking for. Besides that, I was not able to create a test for the show_ratings and movie_ratings tables, I attempted to test the movie_ratings table but I wasn't able to get it. Other than that, I don't know why but I still wasn't able to get the pytest workflows to work unfortunately. 
