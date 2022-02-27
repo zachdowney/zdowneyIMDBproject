@@ -1,6 +1,7 @@
+import sprintOne
 import sprintThree
 import sprintTwo
-import sprintOne
+import sprintFour
 
 
 def previous_sprints():
@@ -27,17 +28,7 @@ def previous_sprints():
 
 
 def main():
-    while True:
-        try:
-            answer = input("Would you like to (Enter 1 or 2 and press enter):\n 1. Update the data\n"
-                           " 2. Run the data visualization\n")
-            if answer == '1':
-                previous_sprints()
-                break
-            elif answer == '2':
-                break
-        except ValueError:
-            continue
+    sprintFour.gui_home_page()
 
 
 if __name__ == '__main__':
