@@ -42,25 +42,27 @@ def data_visualization():
     movie_button.grid(row=3, column=1, padx=10, pady=10)
     movie_button = tkinter.Button(root, text='Top 250 Movies', command=lambda: top250_movies_gui())
     movie_button.grid(row=4, column=1, padx=10, pady=10)
-    up_down_button = tkinter.Button(root, text='Up/Down Graph', command=lambda: up_down_graph())
+    up_down_button = tkinter.Button(root, text='Up/Down Graph', command=lambda: up_down_graph('popular_movies',
+                                                                                              'popular_tv',
+                                                                                              'shows_db.sqlite'))
     up_down_button.grid(row=5, column=1, padx=10, pady=10)
     up_down_button = tkinter.Button(root, text='Movies appearing \n in most popular movies\n and top 250 movies',
-                                    command=lambda: in_both_tables('popular_movies', 'movies'))
+                                    command=lambda: in_both_tables('popular_movies', 'movies', 'shows_db.sqlite'))
     up_down_button.grid(row=6, column=1, padx=10, pady=10)
     up_down_button = tkinter.Button(root, text='Shows appearing \n in most popular shows\n and top 250 shows',
-                                    command=lambda: in_both_tables('popular_tv', 'shows'))
+                                    command=lambda: in_both_tables('popular_tv', 'shows', 'shows_db.sqlite'))
     up_down_button.grid(row=7, column=1, padx=10, pady=10)
     root.mainloop()
 
 
 def pop_shows_gui():
     pop_tv = sprintOne.get_data("https://imdb-api.com/en/API/MostPopularTVs/")
-    create_most_popular_tables(pop_tv, 'popular_tv', "Most Popular Tv Shows", '2000x600')
+    create_most_popular_tables(pop_tv, 'popular_tv', "Most Popular Tv Shows", '2000x600', 'shows_db.sqlite')
 
 
 def pop_movies_gui():
     pop_movies = sprintOne.get_data("https://imdb-api.com/en/API/MostPopularMovies/")
-    create_most_popular_tables(pop_movies, 'popular_movies', "Most Popular Movies", '2000x600')
+    create_most_popular_tables(pop_movies, 'popular_movies', "Most Popular Movies", '2000x600', 'shows_db.sqlite')
 
 
 def top250_shows_gui():
@@ -73,7 +75,7 @@ def top250_movies_gui():
     create_top250_tables(movies, 'movies', "Top 250 Movies", '2000x600')
 
 
-def create_most_popular_tables(data, table_name, title, geometry):
+def create_most_popular_tables(data, table_name, title, geometry, db_name):
     root = tkinter.Tk()
     root.title(title)
     root.geometry(geometry)
@@ -82,9 +84,10 @@ def create_most_popular_tables(data, table_name, title, geometry):
     rank_statement = '''SELECT * from ''' + table_name + ''' ORDER BY rank DESC'''
     up_down_statement = '''SELECT * from ''' + table_name + ''' ORDER BY rankUpDown ASC'''
 
-    popular_labeling(data, table_name, title, geometry, second_frame, rank_statement, up_down_statement)
+    popular_labeling(data, table_name, title, geometry, second_frame, rank_statement, up_down_statement,
+                     db_name)
 
-    conn = sqlite3.connect('shows_db.sqlite')
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
 
     cursor.execute('''SELECT * from ''' + table_name)
@@ -136,7 +139,7 @@ def create_top250_tables(data, table_name, title, geometry):
         ratings_input.grid(row=i + 1, column=6)
 
 
-def rank_up_down_sorting(data, table_name, title, geometry, select_statement):
+def rank_up_down_sorting(data, table_name, title, geometry, select_statement, db_name):
     root = tkinter.Tk()
     root.title(title)
     root.geometry(geometry)
@@ -146,9 +149,10 @@ def rank_up_down_sorting(data, table_name, title, geometry, select_statement):
     up_down_statement = '''SELECT * from ''' + table_name + ''' ORDER BY rankUpDown DESC'''
 
     # Button
-    popular_labeling(data, table_name, title, geometry, second_frame, rank_statement, up_down_statement)
+    popular_labeling(data, table_name, title, geometry, second_frame, rank_statement, up_down_statement,
+                     'shows_db.sqlite')
 
-    conn = sqlite3.connect('shows_db.sqlite')
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     statement = select_statement
     cursor.execute(statement)
@@ -182,7 +186,7 @@ def ratings_check(cursor, record):
     root = Tk()
     root.title = 'Ratings'
     root.geometry = '1000x1000'
-    if cursor.execute('''SELECT * from movie_ratings WHERE movie_ratings.fullTitle = ''' + str(record[4])) :
+    if cursor.execute('''SELECT * from movie_ratings WHERE movie_ratings.fullTitle = ''' + str(record[4])):
         ratings = cursor.fetchone()
         ratings_input = Label(root, text=str(ratings))
         ratings_input.grid(row=1, column=1, rowspan=10, columnspan=10)
@@ -208,16 +212,16 @@ def scrollbar(root):
     return second_frame
 
 
-def popular_labeling(data, table_name, title, geometry, second_frame, rank_statement, up_down_statement):
+def popular_labeling(data, table_name, title, geometry, second_frame, rank_statement, up_down_statement, db_name):
     id_label = tkinter.Label(second_frame, text='id')
     id_label.grid(row=0, column=0)
     rankings_button = tkinter.Button(second_frame, text='rank',
                                      command=lambda: rank_up_down_sorting(data, table_name, title, geometry,
-                                                                          rank_statement))
+                                                                          rank_statement, db_name))
     rankings_button.grid(row=0, column=1)
     up_down_button = tkinter.Button(second_frame, text='rankUpDown',
                                     command=lambda: rank_up_down_sorting(data, table_name, title, geometry,
-                                                                         up_down_statement))
+                                                                         up_down_statement, db_name))
     up_down_button.grid(row=0, column=2)
     title_label = tkinter.Label(second_frame, text='title')
     title_label.grid(row=0, column=3)
@@ -233,17 +237,17 @@ def popular_labeling(data, table_name, title, geometry, second_frame, rank_state
     ratings_label.grid(row=0, column=8)
 
 
-def up_down_graph():
-    conn = sqlite3.connect('shows_db.sqlite')
+def up_down_graph(first_table, second_table, db_name):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
 
-    cursor.execute('''SELECT * from popular_movies WHERE rankUpDown > 0''')
+    cursor.execute('''SELECT * from ''' + first_table + ''' WHERE rankUpDown > 0''')
     movies_up = cursor.fetchall()
-    cursor.execute('''SELECT * from popular_movies WHERE rankUpDown < 0''')
+    cursor.execute('''SELECT * from ''' + first_table + ''' WHERE rankUpDown < 0''')
     movies_down = cursor.fetchall()
-    cursor.execute('''SELECT * from popular_tv WHERE rankUpDown > 0''')
+    cursor.execute('''SELECT * from ''' + second_table + ''' WHERE rankUpDown > 0''')
     shows_up = cursor.fetchall()
-    cursor.execute('''SELECT * from popular_tv WHERE rankUpDown < 0''')
+    cursor.execute('''SELECT * from ''' + second_table + ''' WHERE rankUpDown < 0''')
     shows_down = cursor.fetchall()
 
     # https://www.geeksforgeeks.org/bar-plot-in-matplotlib/?ref=lbp
@@ -260,19 +264,13 @@ def up_down_graph():
     plot.show()
 
 
-def in_both_tables(first_table_name, second_table_name):
+def in_both_tables(first_table_name, second_table_name, db_name):
     root = tkinter.Tk()
     root.title("Existing In Both")
     root.geometry('1000x1000')
     second_frame = scrollbar(root)
 
-    conn = sqlite3.connect('shows_db.sqlite')
-    cursor = conn.cursor()
-
-    cursor.execute('''SELECT * from ''' + first_table_name +
-                   ''' INNER JOIN ''' + second_table_name +
-                   ''' on ''' + first_table_name + '''.fullTitle = ''' + second_table_name + '''.fullTitle''')
-    in_both = cursor.fetchall()
+    in_both = in_both_finder(first_table_name, second_table_name, db_name)
 
     id_label = tkinter.Label(second_frame, text='id')
     id_label.grid(row=0, column=0)
@@ -299,6 +297,17 @@ def in_both_tables(first_table_name, second_table_name):
         year_input.grid(row=i + 1, column=4)
 
 
+def in_both_finder(first_table_name, second_table_name, db_name):
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute('''SELECT * from ''' + first_table_name +
+                   ''' INNER JOIN ''' + second_table_name +
+                   ''' on ''' + first_table_name + '''.fullTitle = ''' + second_table_name + '''.fullTitle''')
+    in_both = cursor.fetchall()
+    return in_both
+
+
+# Attempt at ratings
 # def ratings_check(cursor, record, second_frame):
 #     root = tkinter.Tk()
 #     root.title('User Ratings')
