@@ -1,6 +1,13 @@
+import os
+import tkinter
+from tkinter import Tk
+
 import sprintTwo
 import sprintOne
 import sprintThree
+import sprintFour
+import sqlite3
+import pytest
 
 
 def test_get_shows():
@@ -95,63 +102,93 @@ def test_popular_tv_table():
     assert data[3] == 'BSU'
 
 
-def test_popular_movies_table():
-    popular_movie = [{"id": "tt1234567", "rank": "1", "rankUpDown": "+1", "title": "ZJD",
-                      "fullTitle": "ZJD (2022)",
-                      "year": "2022",
-                      "crew": "Zach Downey", "imDbRating": "9.3",
-                      "imDbRatingCount": "100"}]
+# Attempt at testing ordered data
+def test_ordered_data():
+    popular_movies = [{"id": "tt1234567", "rank": "1", "rankUpDown": "0", "title": "Whitman", "fullTitle": "A (2022)",
+                       "year": "2022",
+                       "crew": "Zach Downey", "imDbRating": "9.9",
+                       "imDbRatingCount": "25000"},
+                      {"id": "tt2345678", "rank": "2", "rankUpDown": "+23", "title": "Hanson",
+                       "fullTitle": "ZJD (2022)",
+                       "year": "2022",
+                       "crew": "Zach Downey", "imDbRating": "9.3",
+                       "imDbRatingCount": "100"},
+                      {"id": "tt3456789", "rank": "3", "rankUpDown": "+15", "title": "Marshfield",
+                       "fullTitle": "Z (2022)",
+                       "year": "2022",
+                       "crew": "Zach Downey", "imDbRating": "9.3",
+                       "imDbRatingCount": "100"},
+                      {"id": "tt4567890", "rank": "4", "rankUpDown": "+25", "title": "Bridgewater",
+                       "fullTitle": "D (2022)",
+                       "year": "2022",
+                       "crew": "Zach Downey", "imDbRating": "9.3",
+                       "imDbRatingCount": "100"},
+                      {"id": "tt5678901", "rank": "5", "rankUpDown": "-3", "title": "Abington",
+                       "fullTitle": "S (2022)",
+                       "year": "2022",
+                       "crew": "Zach Downey", "imDbRating": "9.3",
+                       "imDbRatingCount": "100"},
+                      {"id": "tt6789012", "rank": "6", "rankUpDown": "+2", "title": "Plymouth",
+                       "fullTitle": "o (2022)",
+                       "year": "2022",
+                       "crew": "Zach Downey", "imDbRating": "9.3",
+                       "imDbRatingCount": "100"},
+                      {"id": "tt7890123", "rank": "7", "rankUpDown": "-3", "title": "Carver", "fullTitle": "i (2022)",
+                       "year": "2022",
+                       "crew": "Zach Downey", "imDbRating": "9.3",
+                       "imDbRatingCount": "100"},
+                      {"id": "tt8901234", "rank": "8", "rankUpDown": "+15", "title": "Brockton",
+                       "fullTitle": "jh (2022)",
+                       "year": "2022",
+                       "crew": "Zach Downey", "imDbRating": "9.3",
+                       "imDbRatingCount": "100"},
+                      {"id": "tt9012345", "rank": "9", "rankUpDown": "-4", "title": "Rockland",
+                       "fullTitle": "bgf (2022)",
+                       "year": "2022",
+                       "crew": "Zach Downey", "imDbRating": "9.3",
+                       "imDbRatingCount": "100"},
+                      {"id": "tt0123456", "rank": "10", "rankUpDown": "+40", "title": "Scituate",
+                       "fullTitle": "nv (2022)",
+                       "year": "2022",
+                       "crew": "Zach Downey", "imDbRating": "9.3",
+                       "imDbRatingCount": "100"},
+                      {"id": "tt2468024", "rank": "11", "rankUpDown": "-5", "title": "Hingham",
+                       "fullTitle": "fds (2022)",
+                       "year": "2022",
+                       "crew": "Zach Downey", "imDbRating": "9.3",
+                       "imDbRatingCount": "100"}]
+
     conn, cursor = sprintTwo.open_db('test_db.sqlite')
     print(type(conn))
+    root = tkinter.Tk()
     sprintThree.create_popular_movies_table(cursor)
-    sprintThree.fill_pop_movies_table(cursor, popular_movie)
-    cursor.execute("""SELECT * FROM popular_movies""")
-    data = cursor.fetchone()
+    sprintThree.fill_pop_movies_table(cursor, popular_movies)
+    second_frame = sprintFour.scrollbar(root)
+    rank_statement = '''SELECT * from popular_movies ORDER BY rank DESC'''
+    up_down_statement = '''SELECT * from popular_movies ORDER BY rankUpDown ASC'''
+    sprintFour.create_most_popular_tables(popular_movies, 'popular_movies', 'TEST DATA', '2000x2000', 'test_db.sqlite')
+    sprintFour.popular_labeling(popular_movies, 'popular_movies', 'Test Data Window', '2000x2000', second_frame,
+                                rank_statement, up_down_statement, 'test_db.sqlite')
     sprintTwo.close_db(conn)
-    assert data[3] == 'ZJD'
 
-# attempt at testing movie ratings table.
-# def test_movies_ratings_table():
-#     test_movie_list = [
-#         {"id": "tt5834426", "rank": "11", "rankUpDown": "-5", "title": "Moonfall", "fullTitle": "Moonfall (2022)",
-#          "year": "2022", "imDbRating": "5.3", "imDbRatingCount": "11376"},
-#         {"id": "tt8041270", "rank": "12", "rankUpDown": "+44", "title": "Jurassic World Dominion",
-#          "fullTitle": "Jurassic World Dominion (2022)", "year": "2022",
-#          "crew": "Colin Trevorrow (dir.), Bryce Dallas Howard, Laura Dern", "imDbRating": "",
-#          "imDbRatingCount": "0"},
-#         {"id": "tt1464335", "rank": "13", "rankUpDown": "-2", "title": "Uncharted",
-#          "fullTitle": "Uncharted (2022)", "year": "2022",
-#          "crew": "Ruben Fleischer (dir.), Tom Holland, Mark Wahlberg", "imDbRating": "6.7",
-#          "imDbRatingCount": "17812"},
-#         {"id": "tt11214590", "rank": "14", "rankUpDown": "-4", "title": "House of Gucci",
-#          "fullTitle": "House of Gucci (2021)", "year": "2021",
-#          "crew": "Ridley Scott (dir.), Lady Gaga, Adam Driver", "imDbRating": "6.7",
-#          "imDbRatingCount": "74255"},
-#         {"id": "tt11286314", "rank": "15", "rankUpDown": "-3", "title": "Don't Look Up",
-#          "fullTitle": "Don't Look Up (2021)", "year": "2021",
-#          "crew": "Adam McKay (dir.), Leonardo DiCaprio, Jennifer Lawrence", "imDbRating": "7.2",
-#          "imDbRatingCount": "434954"},
-#         {"id": "tt11271038", "rank": "16", "rankUpDown": "+6", "title": "Licorice Pizza",
-#          "fullTitle": "Licorice Pizza (2021)", "year": "2021",
-#          "crew": "Paul Thomas Anderson (dir.), Alana Haim, Cooper Hoffman", "imDbRating": "7.8",
-#          "imDbRatingCount": "30078"},
-#         {"id": "tt4513678", "rank": "17", "rankUpDown": "-4", "title": "Ghostbusters: Afterlife",
-#          "fullTitle": "Ghostbusters: Afterlife (2021)", "year": "2021",
-#          "crew": "Jason Reitman (dir.), Carrie Coon, Paul Rudd",
-#          "imDbRating": "7.2", "imDbRatingCount": "118507"},
-#         {"id": "tt12789558", "rank": "18", "rankUpDown": "+8", "title": "Belfast", "fullTitle": "Belfast (2021)",
-#          "year": "2021", "crew": "Kenneth Branagh (dir.), Jude Hill, Lewis McAskie", "imDbRating": "7.4",
-#          "imDbRatingCount": "29499"},
-#         {"id": "tt1160419", "rank": "19", "rankUpDown": "-2", "title": "Dune", "fullTitle": "Dune (2021)",
-#          "year": "2021", "crew": "Denis Villeneuve (dir.), Timothée Chalamet, Rebecca Ferguson",
-#          "imDbRating": "8.1", "imDbRatingCount": "489540"},
-#         {"id": "tt10366460", "rank": "20", "rankUpDown": "+35", "title": "CODA", "fullTitle": "CODA (2021)",
-#          "year": "2021", "crew": "Sian Heder (dir.), Emilia Jones, Marlee Matlin",
-#          "imDbRating": "8.1", "imDbRatingCount": "49958"}]
-#     conn, cursor = sprintTwo.open_db('test.db')
-#     print(type(conn))
-#     sprintThree.create_movie_ratings_table(cursor)
-#     sprintThree.fill_movie_ratings_table(cursor, test_movie_list)
-#     cursor.execute("""SELECT * FROM movie_ratings""")
-#     cursor.fetchall()
-#     sprintTwo.close_db(conn)
+
+def test_in_both():
+    assert len(sprintFour.in_both_finder('popular_tv', 'shows', 'test_db.sqlite')) == 1
+    assert len(sprintFour.in_both_finder('popular_movies', 'movies', 'test_db.sqlite')) == 0
+
+
+def test_foreign_key():
+    conn, cursor = sprintTwo.open_db("test_db.sqlite")
+    sprintTwo.create_shows_table(cursor)
+    sprintTwo.create_show_ratings_table(cursor)
+    cursor.execute('''SELECT sql FROM sqlite_master WHERE tbl_name = ? AND type = ?''', ("show_ratings", "table"))
+    data = cursor.fetchall()
+    assert len(data) == 1  # there should only be one table
+    sql_statement: str = data[0][0]  # get the only data data is a list of one row, which contains only one column
+    sprintTwo.close_db(conn)
+    assert "FOREIGN KEY" in sql_statement and "REFERENCES shows" in sql_statement
+
+
+def test_up_down_graph():
+    sprintFour.up_down_graph('popular_movies', 'popular_tv', 'test_db.sqlite')
+
