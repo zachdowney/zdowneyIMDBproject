@@ -1,6 +1,6 @@
 import tkinter
 from tkinter import ttk
-from tkinter import *
+from tkinter import Tk, Label, Frame, Canvas, Y, LEFT, RIGHT, VERTICAL, BOTH
 import matplotlib.pyplot as plot
 
 # https://www.youtube.com/watch?v=AK1J8xF4fuk&t=1360s video helped with everything
