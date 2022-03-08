@@ -1,18 +1,14 @@
 import tkinter
 from tkinter import ttk
 from tkinter import *
-import numpy as np
 import matplotlib.pyplot as plot
 
 # https://www.youtube.com/watch?v=AK1J8xF4fuk&t=1360s video helped with everything
 
 
 import sprintOne
-import sprintTwo
-import sprintThree
 import main
 import sqlite3
-import requests
 
 
 def gui_home_page():
