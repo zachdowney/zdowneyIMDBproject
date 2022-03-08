@@ -1,38 +1,11 @@
 import sqlite3
 from sqlite3 import IntegrityError
-
 import requests
 import secrets
 
 
-def create_popular_tv_table(cursor: sqlite3.Cursor):
-    cursor.execute('''CREATE TABLE IF NOT EXISTS popular_tv (
-            id TEXT PRIMARY KEY,
-            rank INTEGER DEFAULT 0,
-            rankUpDown INTEGER DEFAULT 0,
-            title TEXT NOT NULL,
-            fullTitle TEXT NOT NULL,
-            year INTEGER DEFAULT 0,
-            crew TEXT NOT NULL,
-            imDbRating REAL DEFAULT 0,
-            imDbRatingCount INTEGER DEFAULT 0
-            );''')
-
-
-def create_movies_table(cursor: sqlite3.Cursor):
-    cursor.execute('''CREATE TABLE IF NOT EXISTS movies (
-            id TEXT PRIMARY KEY,
-            title TEXT NOT NULL,
-            fullTitle TEXT NOT NULL,
-            year INTEGER DEFAULT 0,
-            crew TEXT NOT NULL,
-            imDbRating REAL DEFAULT 0,
-            imDbRatingCount INTEGER DEFAULT 0
-            );''')
-
-
-def create_popular_movies_table(cursor: sqlite3.Cursor):
-    cursor.execute('''CREATE TABLE IF NOT EXISTS popular_movies (
+def create_popular_tables(cursor: sqlite3.Cursor, table_name):
+    cursor.execute('''CREATE TABLE IF NOT EXISTS ''' + table_name + ''' (
             id TEXT PRIMARY KEY,
             rank INTEGER DEFAULT 0,
             rankUpDown INTEGER DEFAULT 0,
@@ -63,57 +36,22 @@ def create_movie_ratings_table(cursor: sqlite3.Cursor):
                 );''')
 
 
-def fill_pop_tv_table(cursor: sqlite3.Cursor, data):
+def fill_pop_tables(cursor: sqlite3.Cursor, data, table_name):
     for i in range(0, len(data)):
         try:
-            cursor.execute('''INSERT INTO popular_tv (id, rank, rankUpDown, title,
+            cursor.execute('''INSERT INTO ''' + table_name + ''' (id, rank, rankUpDown, title,
                            fullTitle, year, crew, imDbRating, imDbRatingCount)
                            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                            (data[i]['id'], data[i]['rank'], data[i]['rankUpDown'], data[i]['title'],
                             data[i]['fullTitle'], data[i]['year'], data[i]['crew'], data[i]['imDbRating'],
                             data[i]['imDbRatingCount']))
 
-            cursor.execute('SELECT rowid, * FROM popular_tv')
+            cursor.execute('''SELECT rowid, * FROM ''' + table_name)
             cursor.fetchall()
         except IntegrityError:
-            cursor.execute('''DROP TABLE popular_tv''')
-            create_popular_tv_table(cursor)
-            fill_pop_tv_table(cursor, data)
-
-
-def fill_pop_movies_table(cursor: sqlite3.Cursor, data):
-    for i in range(0, len(data)):
-        try:
-            cursor.execute('''INSERT INTO popular_movies (id, rank, rankUpDown, title,
-                           fullTitle, year, crew, imDbRating, imDbRatingCount)
-                           VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                           (data[i]['id'], data[i]['rank'], data[i]['rankUpDown'], data[i]['title'],
-                            data[i]['fullTitle'], data[i]['year'], data[i]['crew'], data[i]['imDbRating'],
-                            data[i]['imDbRatingCount']))
-
-            cursor.execute('SELECT rowid, * FROM popular_movies')
-            cursor.fetchall()
-        except IntegrityError:
-            cursor.execute('''DROP TABLE popular_movies''')
-            create_popular_movies_table(cursor)
-            fill_pop_movies_table(cursor, data)
-
-
-def fill_movies_table(cursor: sqlite3.Cursor, data):
-    for i in range(0, len(data)):
-        try:
-            cursor.execute('''INSERT INTO movies (id, title,
-                           fullTitle, year, crew, imDbRating, imDbRatingCount)
-                           VALUES(?, ?, ?, ?, ?, ?, ?)''',
-                           (data[i]['id'], data[i]['title'], data[i]['fullTitle'], data[i]['year'],
-                            data[i]['crew'], data[i]['imDbRating'], data[i]['imDbRatingCount']))
-
-            cursor.execute('SELECT rowid, * FROM movies')
-            cursor.fetchall()
-        except IntegrityError:
-            cursor.execute('''DROP TABLE movies''')
-            create_movies_table(cursor)
-            fill_movies_table(cursor, data)
+            cursor.execute('''DROP TABLE ''' + table_name)
+            create_popular_tables(cursor, table_name)
+            fill_pop_tables(cursor, data, table_name)
 
 
 def find_biggest_movers(data):
