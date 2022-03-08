@@ -186,4 +186,3 @@ def test_foreign_key():
 
 def test_up_down_graph():
     sprintFour.up_down_graph('popular_movies', 'popular_tv', 'test_db.sqlite')
-
