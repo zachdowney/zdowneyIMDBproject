@@ -252,7 +252,7 @@ def up_down_graph(first_table, second_table, db_name):
             'Shows moving up': len(shows_up), 'Shows moving down': len(shows_down)}
     up_down = list(data.keys())
     values = list(data.values())
-    fig = plot.figure(figsize=(10, 5))
+    plot.figure(figsize=(10, 5))
     # creating the bar plot
     plot.bar(up_down, values, color='maroon', width=0.4)
     plot.ylabel("No. of shows/movies")
