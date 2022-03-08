@@ -155,15 +155,15 @@ def test_ordered_data():
 
     conn, cursor = sprintTwo.open_db('test_db.sqlite')
     print(type(conn))
-    root = tkinter.Tk()
+    # root = tkinter.Tk()
     sprintThree.create_popular_tables(cursor, 'popular_movies')
     sprintThree.fill_pop_tables(cursor, popular_movies, 'popular_movies')
-    second_frame = sprintFour.scrollbar(root)
-    rank_statement = '''SELECT * from popular_movies ORDER BY rank DESC'''
-    up_down_statement = '''SELECT * from popular_movies ORDER BY rankUpDown ASC'''
-    sprintFour.create_most_popular_tables(popular_movies, 'popular_movies', 'TEST DATA', '2000x2000', 'test_db.sqlite')
-    sprintFour.popular_labeling(popular_movies, 'popular_movies', 'Test Data Window', '2000x2000', second_frame,
-                                rank_statement, up_down_statement, 'test_db.sqlite')
+    # second_frame = sprintFour.scrollbar(root)
+    # rank_statement = '''SELECT * from popular_movies ORDER BY rank DESC'''
+    # up_down_statement = '''SELECT * from popular_movies ORDER BY rankUpDown ASC'''
+    # sprintFour.create_most_popular_tables(popular_movies, 'popular_movies', 'TEST DATA', '2000x2000', 'test_db.sqlite')
+    # sprintFour.popular_labeling(popular_movies, 'popular_movies', 'Test Data Window', '2000x2000', second_frame,
+    #                             rank_statement, up_down_statement, 'test_db.sqlite')
     sprintTwo.close_db(conn)
 
 
