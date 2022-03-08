@@ -30,24 +30,24 @@ def data_visualization():
     root.geometry('200x400')
 
     # Button
-    show_button = tkinter.Button(root, text='Most Popular Shows', command=lambda: pop_shows_gui())
-    show_button.grid(row=1, column=1, padx=10, pady=20, )
-    movie_button = tkinter.Button(root, text='Most Popular Movies', command=lambda: pop_movies_gui())
-    movie_button.grid(row=2, column=1, padx=10, pady=10)
-    movie_button = tkinter.Button(root, text='Top 250 Shows', command=lambda: top250_shows_gui())
-    movie_button.grid(row=3, column=1, padx=10, pady=10)
-    movie_button = tkinter.Button(root, text='Top 250 Movies', command=lambda: top250_movies_gui())
-    movie_button.grid(row=4, column=1, padx=10, pady=10)
+    pop_show_button = tkinter.Button(root, text='Most Popular Shows', command=lambda: pop_shows_gui())
+    pop_show_button.grid(row=1, column=1, padx=10, pady=20, )
+    pop_movie_button = tkinter.Button(root, text='Most Popular Movies', command=lambda: pop_movies_gui())
+    pop_movie_button.grid(row=2, column=1, padx=10, pady=10)
+    top_show_button = tkinter.Button(root, text='Top 250 Shows', command=lambda: top250_shows_gui())
+    top_show_button.grid(row=3, column=1, padx=10, pady=10)
+    top_movie_button = tkinter.Button(root, text='Top 250 Movies', command=lambda: top250_movies_gui())
+    top_movie_button.grid(row=4, column=1, padx=10, pady=10)
     up_down_button = tkinter.Button(root, text='Up/Down Graph', command=lambda: up_down_graph('popular_movies',
                                                                                               'popular_tv',
                                                                                               'shows_db.sqlite'))
     up_down_button.grid(row=5, column=1, padx=10, pady=10)
-    up_down_button = tkinter.Button(root, text='Movies appearing \n in most popular movies\n and top 250 movies',
-                                    command=lambda: in_both_tables('popular_movies', 'movies', 'shows_db.sqlite'))
-    up_down_button.grid(row=6, column=1, padx=10, pady=10)
-    up_down_button = tkinter.Button(root, text='Shows appearing \n in most popular shows\n and top 250 shows',
-                                    command=lambda: in_both_tables('popular_tv', 'shows', 'shows_db.sqlite'))
-    up_down_button.grid(row=7, column=1, padx=10, pady=10)
+    in_both_movie_button = tkinter.Button(root, text='Movies appearing \n in most popular movies\n and top 250 movies',
+                                          command=lambda: in_both_tables('popular_movies', 'movies', 'shows_db.sqlite'))
+    in_both_movie_button.grid(row=6, column=1, padx=10, pady=10)
+    in_both_show_button = tkinter.Button(root, text='Shows appearing \n in most popular shows\n and top 250 shows',
+                                         command=lambda: in_both_tables('popular_tv', 'shows', 'shows_db.sqlite'))
+    in_both_show_button.grid(row=7, column=1, padx=10, pady=10)
     root.mainloop()
 
 
@@ -300,7 +300,6 @@ def in_both_finder(first_table_name, second_table_name, db_name):
                    ''' on ''' + first_table_name + '''.fullTitle = ''' + second_table_name + '''.fullTitle''')
     in_both = cursor.fetchall()
     return in_both
-
 
 # Attempt at ratings
 # def ratings_check(cursor, record, second_frame):
