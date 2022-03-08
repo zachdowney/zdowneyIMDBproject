@@ -22,8 +22,8 @@ def test_show_db():
               "imDbRatingCount": "25000"}]
     conn, cursor = sprintTwo.open_db('test_db.sqlite')
     print(type(conn))
-    sprintTwo.create_shows_table(cursor)
-    sprintTwo.fill_shows_table(cursor, shows)
+    sprintTwo.create_top250_tables(cursor, 'shows')
+    sprintTwo.fill_top250_table(cursor, shows, 'shows')
     cursor.execute("""SELECT * FROM shows""")
     data = cursor.fetchone()
     sprintTwo.close_db(conn)
@@ -73,8 +73,8 @@ def test_movie_db():
                "imDbRatingCount": "100000"}]
     conn, cursor = sprintTwo.open_db('test_db.sqlite')
     print(type(conn))
-    sprintThree.create_movies_table(cursor)
-    sprintThree.fill_movies_table(cursor, movies)
+    sprintTwo.create_top250_tables(cursor, 'movies')
+    sprintTwo.fill_top250_table(cursor, movies, 'movies')
     cursor.execute("""SELECT * FROM movies""")
     data = cursor.fetchone()
     sprintTwo.close_db(conn)
@@ -89,8 +89,8 @@ def test_popular_tv_table():
                    "imDbRatingCount": "25000"}]
     conn, cursor = sprintTwo.open_db('test_db.sqlite')
     print(type(conn))
-    sprintThree.create_popular_tv_table(cursor)
-    sprintThree.fill_pop_tv_table(cursor, popular_tv)
+    sprintThree.create_popular_tables(cursor, 'popular_tv')
+    sprintThree.fill_pop_tables(cursor, popular_tv, 'popular_tv')
     cursor.execute("""SELECT * FROM popular_tv""")
     data = cursor.fetchone()
     sprintTwo.close_db(conn)
@@ -156,8 +156,8 @@ def test_ordered_data():
     conn, cursor = sprintTwo.open_db('test_db.sqlite')
     print(type(conn))
     root = tkinter.Tk()
-    sprintThree.create_popular_movies_table(cursor)
-    sprintThree.fill_pop_movies_table(cursor, popular_movies)
+    sprintThree.create_popular_tables(cursor, 'popular_movies')
+    sprintThree.fill_pop_tables(cursor, popular_movies, 'popular_movies')
     second_frame = sprintFour.scrollbar(root)
     rank_statement = '''SELECT * from popular_movies ORDER BY rank DESC'''
     up_down_statement = '''SELECT * from popular_movies ORDER BY rankUpDown ASC'''
@@ -174,7 +174,7 @@ def test_in_both():
 
 def test_foreign_key():
     conn, cursor = sprintTwo.open_db("test_db.sqlite")
-    sprintTwo.create_shows_table(cursor)
+    sprintTwo.create_top250_tables(cursor, 'shows')
     sprintTwo.create_show_ratings_table(cursor)
     cursor.execute('''SELECT sql FROM sqlite_master WHERE tbl_name = ? AND type = ?''', ("show_ratings", "table"))
     data = cursor.fetchall()
