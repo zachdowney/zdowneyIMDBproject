@@ -1,12 +1,8 @@
-import os
 import tkinter
-from tkinter import Tk
-
 import sprintTwo
 import sprintOne
 import sprintThree
 import sprintFour
-import sqlite3
 
 
 def test_get_shows():
