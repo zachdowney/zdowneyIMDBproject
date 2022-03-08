@@ -7,7 +7,6 @@ import sprintOne
 import sprintThree
 import sprintFour
 import sqlite3
-import pytest
 
 
 def test_get_shows():
