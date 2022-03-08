@@ -144,7 +144,6 @@ def rank_up_down_sorting(data, table_name, title, geometry, select_statement, db
     rank_statement = '''SELECT * from ''' + table_name + ''' ORDER BY rank ASC'''
     up_down_statement = '''SELECT * from ''' + table_name + ''' ORDER BY rankUpDown DESC'''
 
-    # Button
     popular_labeling(data, table_name, title, geometry, second_frame, rank_statement, up_down_statement,
                      'shows_db.sqlite')
 
