@@ -16,8 +16,8 @@ def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
     return connection, cursor
 
 
-def create_shows_table(cursor: sqlite3.Cursor):
-    cursor.execute('''CREATE TABLE IF NOT EXISTS shows (
+def create_top250_tables(cursor: sqlite3.Cursor, table_name):
+    cursor.execute('''CREATE TABLE IF NOT EXISTS ''' + table_name + ''' (
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
         fullTitle TEXT NOT NULL,
@@ -58,21 +58,21 @@ def create_show_ratings_table(cursor: sqlite3.Cursor):
             );''')
 
 
-def fill_shows_table(cursor: sqlite3.Cursor, data):
+def fill_top250_table(cursor: sqlite3.Cursor, data, table_name):
     for i in range(0, len(data)):
         try:
-            cursor.execute('''INSERT INTO shows (id, title,
+            cursor.execute('''INSERT INTO ''' + table_name + ''' (id, title,
                            fullTitle, year, crew, imDbRating, imDbRatingCount)
                            VALUES(?, ?, ?, ?, ?, ?, ?)''',
                            (data[i]['id'], data[i]['title'], data[i]['fullTitle'], data[i]['year'],
                             data[i]['crew'], data[i]['imDbRating'], data[i]['imDbRatingCount']))
 
-            cursor.execute('SELECT rowid, * FROM shows')
+            cursor.execute('SELECT rowid, * FROM ''' + table_name)
             cursor.fetchall()
         except IntegrityError:
-            cursor.execute('''DROP TABLE shows''')
-            create_shows_table(cursor)
-            fill_shows_table(cursor, data)
+            cursor.execute('''DROP TABLE ''' + table_name)
+            create_top250_tables(cursor, table_name)
+            fill_top250_table(cursor, data, table_name)
 
 
 def wheel_of_time_into_shows_table(cursor: sqlite3.Cursor):
