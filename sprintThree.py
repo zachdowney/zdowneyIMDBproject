@@ -29,7 +29,6 @@ def create_movie_ratings_table(cursor: sqlite3.Cursor):
                 metacritic REAL DEFAULT 0,
                 theMovieDb REAL DEFAULT 0,
                 rottenTomatoes REAL DEFAULT 0,
-                tV_com REAL DEFAULT 0,
                 filmAffinity INTEGER DEFAULT 0,
                 FOREIGN KEY (imDbId) REFERENCES movies (id)
                 ON DELETE CASCADE
@@ -83,12 +82,12 @@ def fill_movie_ratings_table(cursor: sqlite3.Cursor, data):
                 r = requests.get(ratings_url + secrets.apiKey + "/" + data[i]['id'])
                 info = r.json()
                 cursor.execute('''INSERT INTO movie_ratings (imDbId, title, fullTitle, type, year, imDb, metacritic,
-                                        theMovieDb, rottenTomatoes, tV_com, filmAffinity)
-                                            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                                        theMovieDb, rottenTomatoes, filmAffinity)
+                                            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                                (
                                    info['imDbId'], info['title'], info['fullTitle'], info['type'],
                                    info['year'], info['imDb'], info['metacritic'], info['theMovieDb'],
-                                   info['rottenTomatoes'], info['tV_com'], info['filmAffinity']))
+                                   info['rottenTomatoes'], info['filmAffinity']))
 
             cursor.execute('SELECT * FROM movie_ratings')
             cursor.fetchall()
