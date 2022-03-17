@@ -54,6 +54,6 @@ def save_data(data, filename='data.txt'):
 
     user_ratings(data)
     wheel_user_ratings()
-    list_shows(data)
+    # list_shows(data)
 
     sys.stdout.close()
